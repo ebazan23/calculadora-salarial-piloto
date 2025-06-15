@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Salario para Pilotos Aeroméxico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0D2C54 0%, #145388 100%); 
+            color: #1a202c; 
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; 
+            min-height: 100vh;
+            padding: 1rem; 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .container-wrapper {
+            width: 100%;
+            max-width: 800px; 
+        }
+        .header-logo-container {
+            width: 100%;
+            padding-top: 1.5rem; 
+            padding-left: 0.5rem; 
+        }
+        @media (min-width: 768px) { 
+            .header-logo-container {
+                padding-left: 0;
+            }
+        }
+        .custom-logo-top-left { 
+            height: 4rem; 
+            width: auto;    
+            max-height: 5rem; 
+        }
+        .main-title {
+            font-size: 2.25rem; 
+            font-weight: 800; 
+            color: white;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.25);
+        }
+        .subtitle {
+            color: #a0aec0; 
+            font-weight: 500;
+            font-size: 1.125rem; 
+            margin-top: 0.25rem; 
+        }
+        .byline {
+            color: #718096; 
+            font-size: 0.875rem; 
+            margin-top: 0.25rem; 
+        }
+        .calculator-card {
+            background-color: #ffffff; 
+            border-radius: 16px; 
+            padding: 2.5rem; 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); 
+            margin-top: 1.5rem; 
+        }
+        label {
+            font-weight: 600; 
+            color: #2d3748; 
+            font-size: 0.875rem; 
+        }
+        input[type="number"], select, input[type="date"], input[type="text"], input[type="file"], textarea {
+            border: 1px solid #e2e8f0; 
+            border-radius: 0.5rem; 
+            padding: 0.75rem 1rem; 
+            width: 100%;
+            margin-top: 0.375rem; 
+            box-shadow: inset 0 1px 2px 0 rgba(0,0,0,0.03);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: #f7fafc; 
+        }
+         input[type="file"] {
+            padding: 0.625rem; 
+            background-color: white;
+        }
+        input[type="number"]:focus, select:focus, input[type="date"]:focus, input[type="text"]:focus, input[type="file"]:focus, textarea:focus {
+            outline: none;
+            border-color: #0D47A1; 
+            box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.2); 
+        }
+        input[type="checkbox"] {
+            border-radius: 0.375rem; 
+            border-color: #a0aec0; 
+            color: #0D47A1; 
+            width: 1.25rem; 
+            height: 1.25rem;
+        }
+        input[type="checkbox"]:focus {
+            ring: 2px;
+            ring-offset: 2px;
+            ring-color: #0D47A1; 
+        }
+        .btn {
+            font-weight: 700; 
+            padding: 0.875rem 1.75rem; 
+            border-radius: 0.5rem; 
+            transition: all 0.2s ease-in-out;
+            width: 100%;
+            margin-top: 0.75rem; 
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary { 
+            background-color: #0D47A1; 
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-primary:hover {
+            background-color: #0a3880; 
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        .btn-secondary { 
+            background-color: #D32F2F; 
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-secondary:hover {
+            background-color: #B71C1C; 
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        .btn-gemini {
+            background-color: #4f46e5; /* Indigo */
+            color: white;
+        }
+        .btn-gemini:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+        }
+        .results-section {
+            margin-top: 2.5rem;
+            border-top: 1px solid #e2e8f0; 
+            padding-top: 2rem;
+        }
+        .results-section h3 {
+            font-size: 1.375rem; 
+            font-weight: 700; 
+            color: #0D47A1; 
+            margin-bottom: 1.5rem; 
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #4299e1; 
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.875rem 0.25rem; 
+            border-bottom: 1px solid #edf2f7; 
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .result-label {
+            color: #4a5568; 
+            font-weight: 500; 
+            flex-shrink: 0;
+            margin-right: 1rem;
+        }
+        .result-value {
+            font-weight: 600; 
+            color: #1a202c; 
+            text-align: right;
+        }
+        .total-value {
+            font-weight: 800; 
+        }
+        .catorcena-total .result-value { 
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+        .catorcena-total.neto .result-value { 
+            color: #2f855a; 
+            font-size: 1.25rem; 
+        }
+        .disclaimer {
+            background-color: #f0f9ff; 
+            color: #0c4a6e; 
+            padding: 1rem; 
+            border-radius: 0.5rem; 
+            border-left: 4px solid #0ea5e9; 
+            font-size: 0.875rem; 
+            margin-top: 2rem;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column; 
+            gap: 0.75rem; 
+        }
+        fieldset {
+            border-color: #90cdf4; 
+            border-width: 1px;
+            padding-bottom: 1.5rem;
+            border-radius: 0.75rem;
+        }
+        legend {
+            color: #1e40af; 
+            font-weight: 700;
+            font-size: 1.125rem; 
+        }
+        #pdfStatus {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+        .time-input-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .time-input-group input[type="number"] {
+            width: calc(50% - 0.25rem); 
+        }
+        .time-input-group span {
+            color: #718096; 
+            font-weight: 600;
+        }
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.5); 
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 25px;
+            border: 1px solid #888;
+            width: 80%; 
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .modal-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        .modal-close:hover,
+        .modal-close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0D47A1;
+            margin-bottom: 1rem;
+        }
+        .modal-body {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #374151;
+            white-space: pre-wrap; 
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+
+        @media (min-width: 640px) { 
+            .button-container {
+                flex-direction: row; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-wrapper">
+        <div class="header-logo-container w-full flex justify-start items-center pt-4 md:pt-6 pl-2 md:pl-0 mb-2">
+             <img src="Gemini_Generated_Image_fxu85rfxu85rfxu8.jpg" alt="Logotipo Piloto Bazán" class="custom-logo-top-left" onerror="this.alt='Logotipo no disponible'; this.style.display='none';">
+        </div>
+        <header class="text-center mb-8 mt-0"> <!-- Adjusted top margin for title block -->
+            <h1 class="main-title">Calculadora Salarial de Pilotos</h1>
+            <p class="subtitle mt-1">Estimaciones basadas en CCT AVSA 2024-2026 y Tabuladores 2024</p>
+            <p class="byline">Creado por BAZAN</p>
+        </header>
+
+        <div class="calculator-card">
+            <h2 class="text-xl font-bold mb-4 text-blue-700 border-b-2 border-blue-200 pb-2">Autocompletar desde Hoja de Acreditación</h2>
+            <div class="space-y-3">
+                <div>
+                    <label for="pdfFile" class="block text-sm">Selecciona tu PDF de "Hoja de Acreditación":</label>
+                    <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" class="focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <button type="button" onclick="processPDF()" class="btn btn-primary w-full md:w-auto">Analizar y Autocompletar Hoja</button>
+                <p id="pdfStatus"></p>
+            </div>
+        </div>
+
+        <div class="calculator-card">
+             <h2 class="text-xl font-bold mb-4 text-blue-700 border-b-2 border-blue-200 pb-2">Asistente Gemini ✨</h2>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="cctConceptoSelect" class="block text-sm mb-1">Selecciona un concepto del CCT:</label>
+                    <select id="cctConceptoSelect" name="cctConceptoSelect" class="w-full">
+                        <option value="">-- Elige un concepto --</option>
+                        <option value="Salario Tabular">Salario Tabular</option>
+                        <option value="Compensación de Instructor">Compensación de Instructor</option>
+                        <option value="Bono de Equidad Salarial (B.E.S.)">Bono de Equidad Salarial (B.E.S.)</option>
+                        <option value="Bono de Reconocimiento">Bono de Reconocimiento</option>
+                        <option value="Tiempo Extra de Servicio Diario (TESD)">Tiempo Extra de Servicio Diario (TESD)</option>
+                        <option value="Tiempo Extra de Vuelo Diario (TEVD)">Tiempo Extra de Vuelo Diario (TEVD)</option>
+                        <option value="Tiempo Extra de Vuelo Mensual">Tiempo Extra de Vuelo Mensual</option>
+                        <option value="Jornada Nocturna">Jornada Nocturna</option>
+                        <option value="Tiempo Irrebasable de Servicio Diario (IRRE SERV)">Tiempo Irrebasable de Servicio Diario (IRRE SERV)</option>
+                        <option value="Días de Descanso Laborados">Días de Descanso Laborados</option>
+                        <option value="Horas de E-Learning">Horas de E-Learning</option>
+                        <option value="FCAA (Fondo Caja Ahorro Contractual)">FCAA (Fondo Caja Ahorro Contractual)</option>
+                        <option value="Cláusula Sindical">Cláusula Sindical</option>
+                    </select>
+                    <button type="button" onclick="explicarConceptoCCT()" class="btn btn-gemini mt-2">✨ Explicar Concepto</button>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1">Sugerencias basadas en tu catorcena:</label>
+                     <button type="button" onclick="obtenerSugerenciasFinancieras()" class="btn btn-gemini mt-7">✨ Obtener Sugerencias de Ahorro</button>
+                </div>
+             </div>
+             <div>
+                <h3 class="text-lg font-semibold text-blue-700 mb-2">Delegado Virtual (Asistente CCT)</h3>
+                <label for="preguntaDelegado" class="block text-sm">Escribe tu pregunta sobre el CCT:</label>
+                <textarea id="preguntaDelegado" name="preguntaDelegado" rows="3" placeholder="Ej: ¿Cómo se calcula el pago por vacaciones?" class="w-full focus:ring-blue-500 focus:border-blue-500"></textarea>
+                <button type="button" onclick="consultarDelegadoVirtual()" class="btn btn-gemini mt-2 w-full md:w-auto">Preguntar al Delegado</button>
+            </div>
+        </div>
+
+
+        <div class="calculator-card">
+            <h2 class="text-xl font-bold mb-6 text-blue-700 border-b-2 border-blue-200 pb-2">Ingresa Datos para Cálculo:</h2>
+            <form id="salaryForm" class="space-y-6">
+                <!-- Form fields remain the same -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="puesto" class="block text-sm">Puesto:</label>
+                        <select id="puesto" name="puesto" class="focus:ring-blue-500 focus:border-blue-500">
+                            <option value="CAPITAN">Capitán</option>
+                            <option value="COPILOTO">Copiloto</option>
+                            <option value="ASPIRANTE">Aspirante</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="equipo" class="block text-sm">Equipo:</label>
+                        <select id="equipo" name="equipo" class="focus:ring-blue-500 focus:border-blue-500">
+                            <option value="B737">Boeing 737</option>
+                            <option value="B787">Boeing 787</option>
+                            <option value="B777">Boeing 777</option>
+                            <option value="B767">Boeing 767</option>
+                            <option value="DC9">DC-9</option>
+                            <option value="NA">N/A (para Aspirante)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="fechaContratacion" class="block text-sm">Fecha de Contratación:</label>
+                    <input type="date" id="fechaContratacion" name="fechaContratacion" value="2017-04-03" class="focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="antiguedad" class="block text-sm">Antigüedad (años) <span class="text-xs text-gray-500">(auto)</span>:</label>
+                        <input type="number" id="antiguedad" name="antiguedad" min="0" value="0" class="bg-gray-100 focus:ring-blue-500 focus:border-blue-500" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-sm">Horas de Vuelo Totales (Mes):</label>
+                        <div class="time-input-group">
+                            <input type="number" id="horasVuelo_horas" name="horasVuelo_horas" min="0" value="0" placeholder="HH" class="focus:ring-blue-500 focus:border-blue-500">
+                            <span>:</span>
+                            <input type="number" id="horasVuelo_minutos" name="horasVuelo_minutos" min="0" max="59" value="0" placeholder="MM" class="focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center pt-2">
+                    <input id="esInstructor" name="esInstructor" type="checkbox" class="h-5 w-5 text-blue-600 border-gray-400 rounded focus:ring-blue-500">
+                    <label for="esInstructor" class="ml-3 block text-sm text-gray-900">¿Es Instructor/Asesor?</label>
+                </div>
+                
+                <fieldset class="border border-blue-300 p-4 rounded-lg">
+                    <legend class="text-lg font-semibold text-blue-700 px-2">Conceptos de Pago Adicionales (Totales del Mes)</legend>
+                    <div class="space-y-4 mt-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div>
+                                <label class="block text-sm">Horas Serv. Extra Diario (TESD):</label>
+                                <div class="time-input-group">
+                                    <input type="number" id="horasServicioExtraDiarias_horas" name="horasServicioExtraDiarias_horas" min="0" value="0" placeholder="HH" class="focus:ring-blue-500 focus:border-blue-500">
+                                    <span>:</span>
+                                    <input type="number" id="horasServicioExtraDiarias_minutos" name="horasServicioExtraDiarias_minutos" min="0" max="59" value="0" placeholder="MM" class="focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm">Horas Vuelo Extra Diario (TEVD):</label>
+                                 <div class="time-input-group">
+                                    <input type="number" id="horasVueloExtraDiarias_horas" name="horasVueloExtraDiarias_horas" min="0" value="0" placeholder="HH" class="focus:ring-blue-500 focus:border-blue-500">
+                                    <span>:</span>
+                                    <input type="number" id="horasVueloExtraDiarias_minutos" name="horasVueloExtraDiarias_minutos" min="0" max="59" value="0" placeholder="MM" class="focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm">Horas Exceso Jda. Serv. Irrebasable (IRRE SERV):</label>
+                                <div class="time-input-group">
+                                    <input type="number" id="horasIrreServicio_horas" name="horasIrreServicio_horas" min="0" value="0" placeholder="HH" class="focus:ring-blue-500 focus:border-blue-500">
+                                    <span>:</span>
+                                    <input type="number" id="horasIrreServicio_minutos" name="horasIrreServicio_minutos" min="0" max="59" value="0" placeholder="MM" class="focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="diasDescansoLaborados" class="block text-sm">Días Descanso Laborados (Festivos/7mos):</label>
+                                <input type="number" id="diasDescansoLaborados" name="diasDescansoLaborados" min="0" value="0" class="focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm">Horas Serv. Nocturno (no transoc.):</label>
+                                 <div class="time-input-group">
+                                    <input type="number" id="horasServicioNocturno_horas" name="horasServicioNocturno_horas" min="0" value="0" placeholder="HH" class="focus:ring-blue-500 focus:border-blue-500">
+                                    <span>:</span>
+                                    <input type="number" id="horasServicioNocturno_minutos" name="horasServicioNocturno_minutos" min="0" max="59" value="0" placeholder="MM" class="focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm">Horas de E-Learning:</label>
+                                <div class="time-input-group">
+                                    <input type="number" id="horasELearning_horas" name="horasELearning_horas" min="0" value="0" placeholder="HH" class="focus:ring-blue-500 focus:border-blue-500">
+                                    <span>:</span>
+                                    <input type="number" id="horasELearning_minutos" name="horasELearning_minutos" min="0" max="59" value="0" placeholder="MM" class="focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center mt-4">
+                            <input id="excedeLimiteNocturno" name="excedeLimiteNocturno" type="checkbox" class="h-5 w-5 text-blue-600 border-gray-400 rounded focus:ring-blue-500">
+                            <label for="excedeLimiteNocturno" class="ml-3 block text-sm text-gray-900">¿Excede límite mensual de 5 servicios nocturnos?</label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border border-blue-300 p-4 rounded-lg">
+                    <legend class="text-lg font-semibold text-blue-700 px-2">Agrega Deducciones (Catorcenal)</legend>
+                    <div class="space-y-4 mt-3">
+                        <div>
+                            <label for="imssEstimado" class="block text-sm">Deducción IMSS Catorcenal:</label>
+                            <input type="number" id="imssEstimado" name="imssEstimado" step="0.01" min="0" placeholder="Ej: 1250.25" class="focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="descuentoAspenAdicional" class="block text-sm">Descuento ASPEN Adicional Catorcenal (opcional):</label>
+                            <input type="number" id="descuentoAspenAdicional" name="descuentoAspenAdicional" step="0.01" min="0" placeholder="Ej: 500.00" class="focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="descuentoAjusteAspa" class="block text-sm">Descuento Ajuste ASPA Catorcenal (opcional):</label>
+                            <input type="number" id="descuentoAjusteAspa" name="descuentoAjusteAspa" step="0.01" min="0" placeholder="Ej: 250.00" class="focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </fieldset>
+                
+                <div class="button-container pt-4">
+                    <button type="button" onclick="calculateSalary()" class="btn btn-primary">
+                        Calcular Salario
+                    </button>
+                    <button type="button" onclick="resetForm()" class="btn btn-secondary">
+                        Borrar y Reiniciar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="results" class="calculator-card mt-8 hidden">
+            <!-- Catorcena con Extras -->
+            <div id="catorcenaConExtrasSection" class="results-section">
+                <h3 class="font-semibold text-green-700">Estimación Catorcena con Extras (Bruta y Neta):</h3>
+                <div id="percepcionesBaseCatorcenaConExtras" class="result-item"></div>
+                <div id="otrosPagosCatorcenaConExtras" class="result-item"></div>
+                <div id="todosExtrasCatorcenaConExtras" class="result-item"></div>
+                <div id="brutoCatorcenaConExtras" class="result-item catorcena-total"><span class="result-label">Bruto Estimado Catorcena con Extras:</span><span id="brutoCatorcenaConExtrasValue" class="result-value total-value"></span></div>
+                <div id="isrCatorcenaConExtras" class="result-item"></div>
+                <div id="imssCatorcenaConExtras" class="result-item"></div>
+                <div id="aspenAdicionalCatorcenaConExtras" class="result-item"></div>
+                <div id="ajusteAspaCatorcenaConExtras" class="result-item"></div>
+                <div id="netoCatorcenaConExtras" class="result-item catorcena-total neto"><span class="result-label">Neto Estimado Catorcena con Extras:</span><span id="netoCatorcenaConExtrasValue" class="result-value total-value"></span></div>
+            </div>
+
+            <!-- Catorcena Base -->
+            <div id="catorcenaBaseSection" class="results-section mt-8">
+                <h3 class="font-semibold text-orange-700">Estimación Catorcena Base (Bruta y Neta):</h3>
+                 <div id="percepcionesBaseCatorcenaBase" class="result-item"></div>
+                <div id="otrosPagosCatorcenaBase" class="result-item"></div>
+                <div id="brutoCatorcenaBase" class="result-item catorcena-total"><span class="result-label">Bruto Estimado Catorcena Base:</span><span id="brutoCatorcenaBaseValue" class="result-value total-value"></span></div>
+                <div id="isrCatorcenaBase" class="result-item"></div>
+                <div id="imssCatorcenaBase" class="result-item"></div>
+                <div id="aspenAdicionalCatorcenaBase" class="result-item"></div>
+                <div id="ajusteAspaCatorcenaBase" class="result-item"></div>
+                <div id="netoCatorcenaBase" class="result-item catorcena-total neto"><span class="result-label">Neto Estimado Catorcena Base:</span><span id="netoCatorcenaBaseValue" class="result-value total-value"></span></div>
+            </div>
+            
+            <!-- Resumen Mensual -->
+            <div class="results-section mt-8">
+                <h3 class="font-semibold">Resumen Mensual Estimado (Referencia):</h3>
+                <div id="gananciaBrutaTotalResult" class="result-item"><span class="result-label">Ganancia Bruta Total Mensual:</span><span id="gananciaBrutaTotalValue" class="result-value total-value"></span></div>
+                <div id="isrTotalMensualResult" class="result-item"></div>
+                <div id="imssTotalMensualResult" class="result-item"></div>
+                <div id="aspenAdicionalTotalMensualResult" class="result-item"></div>
+                <div id="ajusteAspaTotalMensualResult" class="result-item"></div>
+                <div id="gananciaNetaEstimadaResult" class="result-item"><span class="result-label">Ganancia Neta Total Mensual Estimada:</span><span id="gananciaNetaEstimadaValue" class="result-value total-value"></span></div>
+            </div>
+            
+            <div class="results-section mt-6">
+                <h3 class="font-semibold">Otros Conceptos Contractuales (Informativo Mensual):</h3>
+                <div id="fcaaInformativoResult" class="result-item"></div>
+                <div id="clausulaSindicalInformativoResult" class="result-item"></div>
+                 <p class="text-xs text-gray-500 mt-2">Nota: El FCAA y la Cláusula Sindical se muestran aquí con fines informativos y ya están considerados en la Ganancia Bruta de cada catorcena como percepciones.</p>
+            </div>
+            <p class="disclaimer">
+                <strong>Importante:</strong> Todos los cálculos son estimaciones. El ISR se calcula al 35% fijo sobre el bruto de cada catorcena. Las deducciones de IMSS y otras son las que usted proporcione. Consulte a un profesional fiscal para cifras exactas.
+            </p>
+        </div>
+
+        <!-- Modal for Gemini Responses -->
+        <div id="geminiModal" class="modal">
+            <div class="modal-content">
+                <span class="modal-close" onclick="closeModal('geminiModal')">&times;</span>
+                <h2 id="geminiModalTitle" class="modal-title">Respuesta del Asistente Gemini ✨</h2>
+                <div id="geminiModalBody" class="modal-body">
+                    <div id="geminiLoadingSpinner" class="loading-spinner hidden"></div>
+                    <p id="geminiResponseArea"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const salariosTabulares = { 
+            "CAPITAN": {
+                "B777": [136884.31, 139657.44, 142507.65, 145415.92, 148383.60, 151351.27, 151351.27, 151351.27, 151351.27, 154378.29, 157465.86, 160615.18, 163827.48, 167104.03, 170448.11, 173855.03, 177332.13, 180878.78, 184496.35],
+                "B787": [130157.95, 132814.23, 135524.78, 138290.53, 141112.82, 143935.08, 143935.08, 143935.08, 143935.08, 146813.78, 149750.06, 152745.06, 155799.96, 158915.96, 162094.28, 165336.16, 168642.89, 172015.74, 175456.06],
+                "B767": [123451.61, 125970.99, 128541.90, 131165.12, 133842.01, 136518.85, 136518.85, 136518.85, 136518.85, 139249.23, 142034.21, 144874.90, 147772.40, 150727.84, 153742.40, 156817.25, 159953.59, 163152.67, 166415.72],
+                "B737": [111353.32, 113625.83, 115944.77, 118310.98, 120725.49, 123140.00, 123140.00, 123140.00, 123140.00, 125602.80, 128114.86, 130677.15, 133290.70, 135956.51, 138675.64, 141449.15, 144278.14, 147163.70, 150106.97],
+                "DC9":  [100440.55, 102490.38, 104582.03, 106716.26, 108894.18, 111072.07, 111072.07, 111072.07, 111072.07, 113293.51, 115559.38, 117870.57, 120227.98, 122632.54, 125085.19, 127586.89, 130138.63, 132741.40, 135396.23]
+            },
+            "COPILOTO": {
+                "B777": [83487.24, 85191.04, 86929.64, 88703.69, 90513.97, 92324.25, 92324.25, 92324.25, 92324.25, 94170.74, 96054.15, 97975.23, 99934.74, 101933.43, 103972.10, 106051.54, 108172.58, 110336.03, 112542.75],
+                "B787": [79396.35, 81016.68, 82670.08, 84357.20, 86078.80, 87800.38, 87800.38, 87800.38, 87800.38, 89556.39, 91347.52, 93174.47, 95037.96, 96938.71, 98877.49, 100855.04, 102872.14, 104929.58, 107028.17],
+                "B767": [75305.50, 76842.31, 78410.52, 80010.72, 81643.60, 83276.47, 83276.47, 83276.47, 83276.47, 84942.00, 86640.84, 88373.66, 90141.13, 91943.95, 93782.83, 95658.49, 97571.66, 99523.09, 101513.55],
+                "B737": [67925.51, 69311.74, 70726.31, 72169.70, 73642.55, 75115.40, 75115.40, 75115.40, 75115.40, 76617.70, 78150.06, 79713.06, 81307.32, 82933.47, 84592.14, 86283.98, 88009.66, 89769.85, 91565.25],
+                "DC9":  [61268.73, 62519.11, 63795.02, 65096.93, 66425.45, 67753.96, 67753.96, 67753.96, 67753.96, 69109.04, 70491.22, 71901.04, 73339.06, 74805.85, 76301.96, 77828.00, 79384.56, 80972.25, 82591.70]
+            },
+            "ASPIRANTE": {
+                "NA": [22951.68] 
+            }
+        };
+
+        const fechaContratacionInput = document.getElementById('fechaContratacion');
+        const antiguedadInput = document.getElementById('antiguedad');
+        const geminiModal = document.getElementById('geminiModal');
+        const geminiModalTitle = document.getElementById('geminiModalTitle');
+        const geminiResponseArea = document.getElementById('geminiResponseArea');
+        const geminiLoadingSpinner = document.getElementById('geminiLoadingSpinner');
+        let netoCatorcenaConExtrasGlobal = 0; 
+
+        function calculateFullYears(startDateStr) {
+            if (!startDateStr) return 0;
+            const parts = startDateStr.split('-');
+            if (parts.length !== 3) return 0; 
+            const year = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1; 
+            const day = parseInt(parts[2], 10);
+            if (isNaN(year) || isNaN(month) || isNaN(day)) return 0;
+            const startDate = new Date(Date.UTC(year, month, day));
+            const today = new Date();
+            const todayUTC = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
+            if (startDate > todayUTC) return 0;
+            let years = todayUTC.getUTCFullYear() - startDate.getUTCFullYear();
+            const monthDiff = todayUTC.getUTCMonth() - startDate.getUTCMonth();
+            const dayDiff = todayUTC.getUTCDate() - startDate.getUTCDate();
+            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+                years--;
+            }
+            return Math.max(0, years);
+        }
+
+        function updateAntiguedad() {
+            const antiguedadCalculada = calculateFullYears(fechaContratacionInput.value);
+            antiguedadInput.value = antiguedadCalculada;
+        }
+        
+        function parseHorasMinutos(horasStr, minutosStr) {
+            const horas = parseInt(horasStr, 10) || 0;
+            const minutos = parseInt(minutosStr, 10) || 0;
+            if (minutos >= 0 && minutos < 60) {
+                return horas + (minutos / 60);
+            }
+            return horas; 
+        }
+
+        function formatHorasMinutosFromDecimal(decimalHours) {
+            if (isNaN(decimalHours) || decimalHours < 0) return "00:00";
+            const totalMinutes = Math.round(decimalHours * 60);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        }
+
+        function convertirHHMMaObjeto(tiempoStr) { 
+            if (typeof tiempoStr === 'string' && tiempoStr.includes(':')) {
+                const parts = tiempoStr.split(':');
+                const h = parseInt(parts[0], 10);
+                const m = parseInt(parts[1], 10);
+                if (!isNaN(h) && !isNaN(m) && m >= 0 && m < 60) {
+                    return { horas: h, minutos: m };
+                }
+            }
+            const decimalVal = parseFloat(tiempoStr);
+            if (!isNaN(decimalVal)) {
+                const h = Math.floor(decimalVal);
+                const m = Math.round((decimalVal - h) * 60);
+                 return { horas: h, minutos: (m < 60 ? m : 0) }; 
+            }
+            return { horas: 0, minutos: 0 }; 
+        }
+
+
+        function processPDF() {
+            const pdfFile = document.getElementById('pdfFile').files[0];
+            const pdfStatusEl = document.getElementById('pdfStatus');
+
+            if (!pdfFile) {
+                pdfStatusEl.textContent = "Por favor, selecciona un archivo PDF primero.";
+                pdfStatusEl.style.color = "#dc2626"; 
+                return;
+            }
+            pdfStatusEl.textContent = "Procesando PDF (simulado)...";
+            pdfStatusEl.style.color = "#60a5fa"; 
+
+            const simulatedHeaderText = "PERIODO Mayo-2025 AEROMEXICO VACACIONES 00:00 EL 00:00 HORAS GARANTIA"; 
+            const simulatedTotalsLine = "TOTALES ,,,,92:21,03:35,00:00,95:56,140:15,04:00,04:45,00:00,21:56,04:01,02:52,00:00,00:00,0,0";
+            
+            try {
+                const totalsArray = simulatedTotalsLine.split(',');
+                
+                const tvacStr = totalsArray.length > 7 ? totalsArray[7].trim() : "00:00";
+                const tesdStr = totalsArray.length > 9 ? totalsArray[9].trim() : "00:00";
+                const tevdStr = totalsArray.length > 10 ? totalsArray[10].trim() : "00:00";
+                const jornocStr = totalsArray.length > 13 ? totalsArray[13].trim() : "00:00";
+                const irreServStr = totalsArray.length > 14 ? totalsArray[14].trim() : "00:00";
+                const dias7DStr = totalsArray.length > 19 ? totalsArray[19].trim() : "0";
+
+                let elHorasStr = "00:00";
+                const elMatch = simulatedHeaderText.match(/EL\s*([0-9:]+)/i);
+                if (elMatch && elMatch[1]) {
+                    elHorasStr = elMatch[1];
+                }
+
+                function setTimeInputs(baseId, timeStrHHMM) { 
+                    const tiempoObj = convertirHHMMaObjeto(timeStrHHMM);
+                    document.getElementById(baseId + '_horas').value = tiempoObj.horas;
+                    document.getElementById(baseId + '_minutos').value = tiempoObj.minutos;
+                }
+
+                setTimeInputs('horasVuelo', tvacStr);
+                setTimeInputs('horasServicioExtraDiarias', tesdStr);
+                setTimeInputs('horasVueloExtraDiarias', tevdStr);
+                setTimeInputs('horasServicioNocturno', jornocStr);
+                setTimeInputs('horasIrreServicio', irreServStr);
+                document.getElementById('diasDescansoLaborados').value = parseInt(dias7DStr, 10) || 0;
+                setTimeInputs('horasELearning', elHorasStr);
+                
+                pdfStatusEl.textContent = "Campos autocompletados desde PDF (simulado). Por favor, verifica los datos.";
+                pdfStatusEl.style.color = "#16a34a"; 
+
+            } catch (error) {
+                console.error("Error parsing PDF simulated text:", error);
+                pdfStatusEl.textContent = "Error al procesar los datos del PDF simulado.";
+                pdfStatusEl.style.color = "#dc2626"; 
+            }
+        }
+
+
+        fechaContratacionInput.addEventListener('change', updateAntiguedad);
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAntiguedad(); 
+            if (document.getElementById('puesto').value === 'ASPIRANTE') {
+                document.getElementById('equipo').value = 'NA';
+                document.getElementById('equipo').disabled = true;
+            }
+        });
+
+        function getSalarioTabular(puesto, equipo, antiguedad) {
+            if (puesto === "ASPIRANTE") {
+                return salariosTabulares.ASPIRANTE.NA[0];
+            }
+            if (!salariosTabulares[puesto] || !salariosTabulares[puesto][equipo]) {
+                return 0; 
+            }
+            const tablaPuestoEquipo = salariosTabulares[puesto][equipo];
+            let indexAntiguedad = antiguedad - 1;
+
+            if (puesto === "CAPITAN" || puesto === "COPILOTO") {
+                 if (antiguedad >= 6 && antiguedad <=9) indexAntiguedad = 5; 
+                 else if (antiguedad > 9) indexAntiguedad = antiguedad - 4; 
+            }
+
+            if (indexAntiguedad < 0) indexAntiguedad = 0;
+            if (indexAntiguedad >= tablaPuestoEquipo.length) indexAntiguedad = tablaPuestoEquipo.length - 1;
+            
+            return tablaPuestoEquipo[indexAntiguedad] || 0;
+        }
+
+        function isPost2010(fechaContratacionStr) {
+            if (!fechaContratacionStr) return true; 
+            const fechaContratacion = new Date(fechaContratacionStr);
+            const fechaLimite = new Date('2010-12-13');
+            return fechaContratacion > fechaLimite;
+        }
+
+        function formatCurrency(value) {
+            return value.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+        }
+
+        function displayResult(elementId, label, value, isCurrency = true, isTotal = false) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                 if (elementId === 'brutoCatorcenaConExtras' || elementId === 'netoCatorcenaConExtras' || 
+                     elementId === 'brutoCatorcenaBase' || elementId === 'netoCatorcenaBase' ||
+                     elementId === 'gananciaBrutaTotalResult' || elementId === 'gananciaNetaEstimadaResult') { 
+                    const valueElementId = elementId + "Value"; 
+                    const valueSpan = document.getElementById(valueElementId);
+                    if (valueSpan) {
+                        valueSpan.textContent = formatCurrency(value);
+                    } else { 
+                         element.innerHTML = `<span class="result-label">${label}:</span> <span class="result-value ${isTotal ? 'total-value' : ''}">${isCurrency ? formatCurrency(value) : value}</span>`;
+                    }
+                } else {
+                    element.innerHTML = `<span class="result-label">${label}:</span> <span class="result-value ${isTotal ? 'total-value' : ''}">${isCurrency ? formatCurrency(value) : value}</span>`;
+                }
+            }
+        }
+        
+        function calculateSalary() {
+            const puesto = document.getElementById('puesto').value;
+            const equipo = document.getElementById('equipo').value;
+            const antiguedad = parseInt(document.getElementById('antiguedad').value) || 0; 
+            
+            const horasVueloTotales = parseHorasMinutos(document.getElementById('horasVuelo_horas').value, document.getElementById('horasVuelo_minutos').value);
+            const esInstructor = document.getElementById('esInstructor').checked;
+            const imssEstimadoCatorcenal = parseFloat(document.getElementById('imssEstimado').value) || 0; 
+            const descuentoAspenAdicionalCatorcenal = parseFloat(document.getElementById('descuentoAspenAdicional').value) || 0; 
+            const descuentoAjusteAspaCatorcenal = parseFloat(document.getElementById('descuentoAjusteAspa').value) || 0; 
+            const fechaContratacion = document.getElementById('fechaContratacion').value;
+            
+            const diasDescansoLaborados = parseInt(document.getElementById('diasDescansoLaborados').value) || 0;
+            const horasServicioNocturno = parseHorasMinutos(document.getElementById('horasServicioNocturno_horas').value, document.getElementById('horasServicioNocturno_minutos').value);
+            const excedeLimiteNocturno = document.getElementById('excedeLimiteNocturno').checked;
+            const horasELearning = parseHorasMinutos(document.getElementById('horasELearning_horas').value, document.getElementById('horasELearning_minutos').value);
+            const horasServicioExtraDiarias = parseHorasMinutos(document.getElementById('horasServicioExtraDiarias_horas').value, document.getElementById('horasServicioExtraDiarias_minutos').value);
+            const horasVueloExtraDiarias = parseHorasMinutos(document.getElementById('horasVueloExtraDiarias_horas').value, document.getElementById('horasVueloExtraDiarias_minutos').value); 
+            const horasIrreServicio = parseHorasMinutos(document.getElementById('horasIrreServicio_horas').value, document.getElementById('horasIrreServicio_minutos').value); 
+
+            const pilotoPost2010 = isPost2010(fechaContratacion);
+
+            // --- CALCULOS MENSUALES ---
+            let salarioTabularMensual = getSalarioTabular(puesto, equipo, antiguedad); 
+            let compensacionInstructorMensual = 0;
+            if (esInstructor && puesto !== "ASPIRANTE") {
+                compensacionInstructorMensual = salarioTabularMensual * 0.35; 
+            }
+            const salarioTabularEfectivoParaExtras = salarioTabularMensual + compensacionInstructorMensual;
+
+            let besMensual = 0;
+            let bonoReconocimientoMensual = 0;
+            let fcaaMensual = 0;
+            let clausulaSindicalMensual = 0;
+            let jornadaOrdinariaMensualVuelo = 65; 
+            let porcentajeHoraExtraVueloDiario = 0.02; 
+            let porcentajeHoraExtraVueloMensualNormal = 0.02; 
+            let porcentajeHoraExtraVueloSobre80 = 0.03; 
+            let porcentajeHoraExtraVueloSobre90 = 0.04; 
+            let limiteHorasNormalesParaExtraVuelo = 65; 
+            let porcentajeServicioNocturno = 0.003; 
+            let porcentajeServicioExtraDiario = 0.01; 
+            let fcaaPorcentaje = 0.08;
+            let clausulaSindicalPorcentaje = 0.15;
+            let porcentajeIrreServ = 0.04; 
+
+            if (pilotoPost2010 && puesto !== "ASPIRANTE") {
+                besMensual = salarioTabularMensual * 0.36; 
+                bonoReconocimientoMensual = salarioTabularMensual * 0.06; 
+                jornadaOrdinariaMensualVuelo = 74; 
+                porcentajeHoraExtraVueloDiario = 0.0125; 
+                porcentajeHoraExtraVueloMensualNormal = 0.04; 
+                porcentajeHoraExtraVueloSobre90 = 0.04; 
+                limiteHorasNormalesParaExtraVuelo = 74;
+                porcentajeServicioNocturno = 0.006; 
+                fcaaPorcentaje = 0.05;
+                clausulaSindicalPorcentaje = 0.06;
+                porcentajeIrreServ = 0.025; 
+            }
+            
+            fcaaMensual = salarioTabularMensual * fcaaPorcentaje;
+            clausulaSindicalMensual = salarioTabularMensual * clausulaSindicalPorcentaje;
+
+            const percepcionesBaseMensuales = salarioTabularMensual + compensacionInstructorMensual + besMensual + bonoReconocimientoMensual + fcaaMensual + clausulaSindicalMensual;
+            
+            const diasPromedioMes = 30.41667;
+            const salarioDiarioOrdinarioRef = (salarioTabularMensual + compensacionInstructorMensual + besMensual + bonoReconocimientoMensual) / diasPromedioMes;
+            
+            let pagoDiasDescansoLaborados = 0;
+            if (diasDescansoLaborados > 0) {
+                pagoDiasDescansoLaborados = diasDescansoLaborados * 3 * salarioDiarioOrdinarioRef;
+            }
+
+            let pagoServicioNocturno = 0;
+            if (horasServicioNocturno > 0) {
+                let multiplicadorNocturno = excedeLimiteNocturno ? 2 : 1;
+                pagoServicioNocturno = horasServicioNocturno * salarioTabularEfectivoParaExtras * porcentajeServicioNocturno * multiplicadorNocturno;
+            }
+
+            let pagoELearning = 0;
+            if (horasELearning > 0) {
+                pagoELearning = horasELearning * salarioTabularEfectivoParaExtras * 0.0055; 
+            }
+
+            let pagoHorasServicioExtra = 0;
+            if (horasServicioExtraDiarias > 0) {
+                pagoHorasServicioExtra = horasServicioExtraDiarias * salarioTabularEfectivoParaExtras * porcentajeServicioExtraDiario;
+            }
+
+            let pagoTEVD = 0;
+            if (horasVueloExtraDiarias > 0) {
+                pagoTEVD = horasVueloExtraDiarias * salarioTabularEfectivoParaExtras * porcentajeHoraExtraVueloDiario;
+            }
+
+            let pagoIrreServ = 0;
+            if (horasIrreServicio > 0) {
+                pagoIrreServ = horasIrreServicio * salarioTabularEfectivoParaExtras * porcentajeIrreServ;
+            }
+
+            let pagoHorasExtraVueloMensual = 0;
+            let detalleHorasExtraMensual = "No se generaron horas extra de vuelo mensuales.";
+            if (horasVueloTotales > limiteHorasNormalesParaExtraVuelo) {
+                if (pilotoPost2010) {
+                    if (horasVueloTotales <= 90) {
+                        let horasExtraCalculadas = horasVueloTotales - limiteHorasNormalesParaExtraVuelo;
+                        pagoHorasExtraVueloMensual = horasExtraCalculadas * (salarioTabularEfectivoParaExtras * porcentajeHoraExtraVueloMensualNormal); 
+                        detalleHorasExtraMensual = `${formatHorasMinutosFromDecimal(horasExtraCalculadas)}h extra vuelo mensual (@ ${(porcentajeHoraExtraVueloMensualNormal*100).toFixed(0)}%)`;
+                    } else { 
+                        let horasExtraHasta90 = 90 - limiteHorasNormalesParaExtraVuelo;
+                        let horasExtraMasDe90 = horasVueloTotales - 90;
+                        pagoHorasExtraVueloMensual = (horasExtraHasta90 * (salarioTabularEfectivoParaExtras * porcentajeHoraExtraVueloMensualNormal)) +
+                                         (horasExtraMasDe90 * (salarioTabularEfectivoParaExtras * porcentajeHoraExtraVueloSobre90)); 
+                        detalleHorasExtraMensual = `${formatHorasMinutosFromDecimal(horasExtraHasta90)}h extra vuelo mensual (@ ${(porcentajeHoraExtraVueloMensualNormal*100).toFixed(0)}%) + ${formatHorasMinutosFromDecimal(horasExtraMasDe90)}h extra vuelo mensual (@ ${(porcentajeHoraExtraVueloSobre90*100).toFixed(0)}%)`;
+                    }
+                } else { 
+                    let horasExtraHasta80 = 0;
+                    let horasExtra80a90 = 0;
+                    let horasExtraMas90 = 0;
+                    if (horasVueloTotales <= 80) {
+                        horasExtraHasta80 = horasVueloTotales - limiteHorasNormalesParaExtraVuelo;
+                        pagoHorasExtraVueloMensual = horasExtraHasta80 * (salarioTabularEfectivoParaExtras * porcentajeHoraExtraVueloMensualNormal); 
+                        detalleHorasExtraMensual = `${formatHorasMinutosFromDecimal(horasExtraHasta80)}h extra vuelo mensual (@ ${(porcentajeHoraExtraVueloMensualNormal*100).toFixed(0)}%)`;
+                    } else if (horasVueloTotales <= 90) {
+                        horasExtraHasta80 = (80 > limiteHorasNormalesParaExtraVuelo) ? (80 - limiteHorasNormalesParaExtraVuelo) : 0;
+                         if (horasVueloTotales > limiteHorasNormalesParaExtraVuelo && horasVueloTotales <= 80) horasExtraHasta80 = horasVueloTotales - limiteHorasNormalesParaExtraVuelo;
+
+                        horasExtra80a90 = horasVueloTotales - 80;
+                        pagoHorasExtraVueloMensual = (horasExtraHasta80 * (salarioTabularEfectivoParaExtras * porcentajeHoraExtraVueloMensualNormal)) + 
+                                         (horasExtra80a90 * (salarioTabularEfectivoParaExtras * porcentajeHoraExtraVueloSobre80)); 
+                        detalleHorasExtraMensual = `${formatHorasMinutosFromDecimal(horasExtraHasta80)}h extra vuelo mensual (@ ${(porcentajeHoraExtraVueloMensualNormal*100).toFixed(0)}%) + ${formatHorasMinutosFromDecimal(horasExtra80a90)}h extra vuelo mensual (@ ${(porcentajeHoraExtraVueloSobre80*100).toFixed(0)}%)`;
+                    } else { 
+                        horasExtraHasta80 = (80 > limiteHorasNormalesParaExtraVuelo) ? (80 - limiteHorasNormalesParaExtraVuelo) : 0;
+                        if (horasVueloTotales > limiteHorasNormalesParaExtraVuelo && horasVueloTotales <= 80) horasExtraHasta80 = horasVueloTotales - limiteHorasNormalesParaExtraVuelo;
+                        
+                        horasExtra80a90 = (90 > 80) ? (90-80) : 0;
+                        horasExtraMas90 = horasVueloTotales - 90;
+                        pagoHorasExtraVueloMensual = (horasExtraHasta80 * (salarioTabularEfectivoParaExtras * porcentajeHoraExtraVueloMensualNormal)) + 
+                                         (horasExtra80a90 * (salarioTabularEfectivoParaExtras * porcentajeHoraExtraVueloSobre80)) + 
+                                         (horasExtraMas90 * (salarioTabularEfectivoParaExtras * porcentajeHoraExtraVueloSobre90));   
+                        detalleHorasExtraMensual = `${formatHorasMinutosFromDecimal(horasExtraHasta80)}h extra vuelo mensual (@ ${(porcentajeHoraExtraVueloMensualNormal*100).toFixed(0)}%) + ${formatHorasMinutosFromDecimal(horasExtra80a90)}h extra vuelo mensual (@ ${(porcentajeHoraExtraVueloSobre80*100).toFixed(0)}%) + ${formatHorasMinutosFromDecimal(horasExtraMas90)}h extra vuelo mensual (@ ${(porcentajeHoraExtraVueloSobre90*100).toFixed(0)}%)`;
+                    }
+                }
+            }
+            
+            const todosLosExtrasMensuales = pagoHorasServicioExtra + pagoTEVD + pagoIrreServ + pagoHorasExtraVueloMensual;
+            const otrosPagosAdicionalesMensuales = pagoDiasDescansoLaborados + pagoServicioNocturno + pagoELearning;
+            const gananciaBrutaTotalMensual = percepcionesBaseMensuales + otrosPagosAdicionalesMensuales + todosLosExtrasMensuales;
+
+            // --- CÁLCULOS CATORCENALES ---
+            const percepcionesBaseCatorcenal = percepcionesBaseMensuales / 2;
+            const otrosPagosAdicionalesCatorcenal = otrosPagosAdicionalesMensuales / 2; 
+
+            // Catorcena con Extras
+            const brutoCatorcenaConExtras = percepcionesBaseCatorcenal + otrosPagosAdicionalesCatorcenal + todosLosExtrasMensuales;
+            const isrCatorcenaConExtras = brutoCatorcenaConExtras * 0.35; 
+            const netoCatorcenaConExtras = brutoCatorcenaConExtras - isrCatorcenaConExtras - imssEstimadoCatorcenal - descuentoAspenAdicionalCatorcenal - descuentoAjusteAspaCatorcenal;
+
+            // Catorcena Base
+            const brutoCatorcenaBase = percepcionesBaseCatorcenal + otrosPagosAdicionalesCatorcenal; 
+            const isrCatorcenaBase = brutoCatorcenaBase * 0.35; 
+            const netoCatorcenaBase = brutoCatorcenaBase - isrCatorcenaBase - imssEstimadoCatorcenal - descuentoAspenAdicionalCatorcenal - descuentoAjusteAspaCatorcenal;
+            
+            netoCatorcenaConExtrasGlobal = netoCatorcenaConExtras; 
+
+            // --- DISPLAY RESULTADOS CATORCENA CON EXTRAS ---
+            displayResult('percepcionesBaseCatorcenaConExtras', 'Percepciones Base / 2', percepcionesBaseCatorcenal);
+            displayResult('otrosPagosCatorcenaConExtras', 'Otros Pagos Adicionales / 2', otrosPagosAdicionalesCatorcenal);
+            displayResult('todosExtrasCatorcenaConExtras', 'Total de Todos los Extras (Mensual)', todosLosExtrasMensuales);
+            displayResult('brutoCatorcenaConExtras', 'Bruto Estimado Catorcena con Extras', brutoCatorcenaConExtras, true, true);
+            displayResult('isrCatorcenaConExtras', 'ISR Estimado (35%)', isrCatorcenaConExtras);
+            displayResult('imssCatorcenaConExtras', 'Deducción IMSS Catorcenal', imssEstimadoCatorcenal);
+            displayResult('aspenAdicionalCatorcenaConExtras', 'Desc. ASPEN Adicional Catorcenal', descuentoAspenAdicionalCatorcenal);
+            displayResult('ajusteAspaCatorcenaConExtras', 'Desc. Ajuste ASPA Catorcenal', descuentoAjusteAspaCatorcenal);
+            displayResult('netoCatorcenaConExtras', 'Neto Estimado Catorcena con Extras', netoCatorcenaConExtras, true, true);
+
+            // --- DISPLAY RESULTADOS CATORCENA BASE ---
+            displayResult('percepcionesBaseCatorcenaBase', 'Percepciones Base / 2', percepcionesBaseCatorcenal);
+            displayResult('otrosPagosCatorcenaBase', 'Otros Pagos Adicionales / 2', otrosPagosAdicionalesCatorcenal); 
+            displayResult('brutoCatorcenaBase', 'Bruto Estimado Catorcena Base', brutoCatorcenaBase, true, true);
+            displayResult('isrCatorcenaBase', 'ISR Estimado (35%)', isrCatorcenaBase);
+            displayResult('imssCatorcenaBase', 'Deducción IMSS Catorcenal', imssEstimadoCatorcenal);
+            displayResult('aspenAdicionalCatorcenaBase', 'Desc. ASPEN Adicional Catorcenal', descuentoAspenAdicionalCatorcenal);
+            displayResult('ajusteAspaCatorcenaBase', 'Desc. Ajuste ASPA Catorcenal', descuentoAjusteAspaCatorcenal);
+            displayResult('netoCatorcenaBase', 'Neto Estimado Catorcena Base', netoCatorcenaBase, true, true);
+
+            // --- DISPLAY RESUMEN MENSUAL ---
+            displayResult('gananciaBrutaTotalResult', 'Ganancia Bruta Total Mensual', gananciaBrutaTotalMensual, true, true);
+            const isrTotalMensual = isrCatorcenaConExtras + isrCatorcenaBase;
+            displayResult('isrTotalMensualResult', 'ISR Total Mensual Estimado (35%)', isrTotalMensual);
+            const imssTotalMensual = imssEstimadoCatorcenal * 2; 
+            displayResult('imssTotalMensualResult', 'Deducción IMSS Mensual Total', imssTotalMensual);
+            const aspenAdicionalTotalMensual = descuentoAspenAdicionalCatorcenal * 2;
+            displayResult('aspenAdicionalTotalMensualResult', 'Descuento ASPEN Adicional Mensual Total', aspenAdicionalTotalMensual);
+            const ajusteAspaTotalMensual = descuentoAjusteAspaCatorcenal * 2;
+            displayResult('ajusteAspaTotalMensualResult', 'Descuento Ajuste ASPA Mensual Total', ajusteAspaTotalMensual);
+            const gananciaNetaTotalMensual = netoCatorcenaConExtras + netoCatorcenaBase;
+            displayResult('gananciaNetaEstimadaResult', 'Ganancia Neta Total Mensual Estimada', gananciaNetaTotalMensual, true, true);
+            
+            // --- DISPLAY OTROS CONCEPTOS INFORMATIVOS MENSUALES ---
+            displayResult('fcaaInformativoResult', `FCAA (${(fcaaPorcentaje*100).toFixed(0)}%) Mensual`, fcaaMensual);
+            displayResult('clausulaSindicalInformativoResult', `Cláusula Sindical (${(clausulaSindicalPorcentaje*100).toFixed(0)}%) Mensual`, clausulaSindicalMensual);
+
+            document.getElementById('results').classList.remove('hidden');
+        }
+
+        function resetForm() {
+            document.getElementById('salaryForm').reset(); 
+            
+            document.getElementById('puesto').value = 'CAPITAN';
+            document.getElementById('equipo').value = 'B737';
+            document.getElementById('fechaContratacion').value = '2017-04-03'; 
+            
+            ['horasVuelo', 'horasServicioExtraDiarias', 'horasVueloExtraDiarias', 'horasIrreServicio', 'horasServicioNocturno', 'horasELearning'].forEach(idBase => {
+                document.getElementById(idBase + '_horas').value = '0';
+                document.getElementById(idBase + '_minutos').value = '0';
+            });
+            
+            document.getElementById('esInstructor').checked = false;
+            document.getElementById('diasDescansoLaborados').value = '0';
+            document.getElementById('excedeLimiteNocturno').checked = false;
+            document.getElementById('imssEstimado').value = '';
+            document.getElementById('descuentoAspenAdicional').value = '';
+            document.getElementById('descuentoAjusteAspa').value = '';
+            
+            const pdfStatusEl = document.getElementById('pdfStatus');
+            if (pdfStatusEl) pdfStatusEl.textContent = '';
+            const pdfFileEl = document.getElementById('pdfFile');
+            if (pdfFileEl) pdfFileEl.value = '';
+
+
+            updateAntiguedad(); 
+
+            document.getElementById('results').classList.add('hidden');
+
+            const puestoDropdown = document.getElementById('puesto');
+            const equipoDropdown = document.getElementById('equipo');
+            if (puestoDropdown.value === 'ASPIRANTE') {
+                equipoDropdown.disabled = true;
+                 equipoDropdown.value = 'NA';
+            } else {
+                equipoDropdown.disabled = false;
+            }
+        }
+
+        function openModal() {
+            if(geminiModal) geminiModal.style.display = "block";
+        }
+
+        function closeModal() {
+            if(geminiModal) geminiModal.style.display = "none";
+            if(geminiLoadingSpinner) geminiLoadingSpinner.classList.add('hidden');
+            if(geminiResponseArea) geminiResponseArea.textContent = '';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == geminiModal) {
+                closeModal();
+            }
+        }
+
+        async function callGeminiAPI(prompt) {
+            if(geminiLoadingSpinner) geminiLoadingSpinner.classList.remove('hidden');
+            if(geminiResponseArea) geminiResponseArea.textContent = '';
+            openModal();
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Error from Gemini API:", errorData);
+                    throw new Error(`Error de la API: ${response.status} ${response.statusText}. Detalles: ${JSON.stringify(errorData.error?.message || errorData)}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    if(geminiResponseArea) geminiResponseArea.textContent = text;
+                } else {
+                    console.error("Unexpected response structure from Gemini API:", result);
+                    if(geminiResponseArea) geminiResponseArea.textContent = "No se pudo obtener una respuesta válida del asistente.";
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                if(geminiResponseArea) geminiResponseArea.textContent = `Error al contactar al asistente: ${error.message}`;
+            } finally {
+                 if(geminiLoadingSpinner) geminiLoadingSpinner.classList.add('hidden');
+            }
+        }
+
+        function explicarConceptoCCT() {
+            const concepto = document.getElementById('cctConceptoSelect').value;
+            if (!concepto) {
+                openModal();
+                if(geminiModalTitle) geminiModalTitle.textContent = "Error";
+                if(geminiResponseArea) geminiResponseArea.textContent = "Por favor, selecciona un concepto para explicar.";
+                return;
+            }
+            if(geminiModalTitle) geminiModalTitle.textContent = `Explicación de: ${concepto}`;
+            const prompt = `Como un experto en el Contrato Colectivo de Trabajo de Aeroméxico y ASPA para el periodo 2024-2026, explica de forma clara y concisa el concepto de "${concepto}" para un piloto. Menciona brevemente cómo se calcula o qué implicaciones tiene según el CCT.`;
+            callGeminiAPI(prompt);
+        }
+
+        function obtenerSugerenciasFinancieras() {
+            if (netoCatorcenaConExtrasGlobal <= 0) { 
+                openModal();
+                if(geminiModalTitle) geminiModalTitle.textContent = "Información Insuficiente";
+                if(geminiResponseArea) geminiResponseArea.textContent = "Por favor, calcula un salario primero para obtener sugerencias basadas en tu catorcena neta con extras.";
+                return;
+            }
+            if(geminiModalTitle) geminiModalTitle.textContent = "Sugerencias Financieras";
+            const prompt = `Soy un piloto y mi ingreso neto estimado en una catorcena (incluyendo pagos extras y después de deducciones estimadas) es de ${formatCurrency(netoCatorcenaConExtrasGlobal)}. Basado en este ingreso catorcenal neto, ¿podrías darme 3 sugerencias generales y breves de ahorro o inversión adecuadas para mi perfil en México, incluyendo ETFs de Vanguard con sus rendimientos históricos de los últimos 20 años si es posible y relevante?`;
+            callGeminiAPI(prompt);
+        }
+        
+        function consultarDelegadoVirtual() {
+            const pregunta = document.getElementById('preguntaDelegado').value;
+            if (!pregunta.trim()) {
+                openModal();
+                if(geminiModalTitle) geminiModalTitle.textContent = "Error";
+                if(geminiResponseArea) geminiResponseArea.textContent = "Por favor, escribe tu pregunta para el Delegado Virtual.";
+                return;
+            }
+            if(geminiModalTitle) geminiModalTitle.textContent = `Respuesta del Delegado Virtual`;
+            const prompt = `Eres 'Delegado Virtual', un asistente experto en el Contrato Colectivo de Trabajo (CCT) entre Aeroméxico y ASPA de México para el periodo 2024-2026. Un piloto tiene la siguiente duda: "${pregunta}". Por favor, responde basándote en el conocimiento típico de un CCT de este tipo y, si es posible, refiriéndote a cláusulas o artículos comunes. Proporciona una respuesta clara y concisa.`;
+            callGeminiAPI(prompt);
+        }
+
+
+        document.getElementById('puesto').addEventListener('change', function() {
+            const equipoDropdown = document.getElementById('equipo');
+            if (this.value === 'ASPIRANTE') {
+                equipoDropdown.value = 'NA';
+                equipoDropdown.disabled = true;
+            } else {
+                equipoDropdown.disabled = false;
+                if(equipoDropdown.value === 'NA') equipoDropdown.value = 'B737'; 
+            }
+        });
+    </script>
+</body>
+</html>
