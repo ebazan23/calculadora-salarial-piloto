@@ -3,232 +3,543 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Salario Catorcenal de Piloto (Estimación)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Calculadora de Salario Catorcenal de Piloto (Estimación Profesional)</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Google Fonts: Montserrat for headings, Open Sans for body -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0V4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        /* Define custom colors based on Aeromexico and Rosa Mexicano */
+        :root {
+            --am-navy-blue: #002D62; /* Aeromexico primary dark blue */
+            --am-navy-blue-dark: #001A33; /* Even darker blue for very strong text */
+            --am-navy-blue-light: #F0F8FF; /* Very light blue for subtle backgrounds */
+            --am-navy-blue-accent: #4F7FBF; /* Mid-tone blue for some elements/icons */
+            --am-red: #CC0000; /* Aeromexico red for accents/warnings */
+            --rosa-mexicano: #E4007C; /* Vibrant pink */
+            --rosa-mexicano-dark: #B50063; /* Darker pink for text/accents */
+            --gray-light: #f8f9fa; /* Bootstrap light gray */
+            --gray-medium: #e9ecef; /* Bootstrap medium gray */
+            --text-dark: #343a40; /* Dark gray for general text */
+            --text-muted: #6c757d; /* Bootstrap muted text */
+            --text-light: #f8f9fa; /* Light text for dark backgrounds */
+            
+            /* Colors extracted from the provided aromxico.webp image */
+            --bg-top-sky: #FFD0A0; /* Light orange/yellow from horizon */
+            --bg-mid-sky: #FF8C6B; /* Pinkish orange from sunset */
+            --bg-mid-clouds: #5A9AD7; /* Mid-blue from clouds */
+            --bg-bottom-clouds: #0A2B4E; /* Deep blue from lower clouds */
         }
-        .result-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 0.5rem 1.5rem;
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: var(--text-dark);
+            /* Background using colors from the provided image */
+            background: linear-gradient(to bottom, var(--bg-top-sky), var(--bg-mid-sky), var(--bg-mid-clouds), var(--bg-bottom-clouds));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 0;
+            background-attachment: fixed; /* Ensures gradient covers full viewport even with scrolling */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--am-navy-blue-dark);
+        }
+
+        /* Main container styling */
+        .main-container {
+            background-color: white;
+            border-radius: 12px; /* Slightly more rounded than Bootstrap default for main container */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); /* Pronounced shadow */
+            padding: 2.5rem; /* Generous padding */
+        }
+
+        /* Headings within the form/results */
+        .section-title {
+            font-size: 1.5rem; /* Equivalent to Bootstrap h4 but with custom style */
+            font-weight: 700;
+            color: var(--am-navy-blue);
+            padding: 0.5rem 1rem;
+            background-color: var(--am-navy-blue-light);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            display: flex;
             align-items: center;
         }
-        .result-grid span:nth-child(odd) {
-            font-weight: 500;
-            color: #4A5568; /* gray-700 */
-        }
-        .result-grid span:nth-child(even) {
+
+        /* Form group styling */
+        .form-group label {
             font-weight: 600;
-            text-align: right;
-            color: #1A202C; /* gray-900 */
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
         }
-        .result-grid .net-pay {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #2F855A; /* green-700 */
+
+        /* Modern input/select styling */
+        .form-control-custom {
+            padding: 0.75rem 1rem;
+            border: 1px solid #ced4da; /* Bootstrap default border */
+            border-radius: 0.375rem; /* Bootstrap default border-radius */
+            background-color: white; /* Clean white background */
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            font-size: 1rem;
         }
-        .form-group {
-            display: flex;
-            flex-direction: column;
+        .form-control-custom:focus {
+            border-color: var(--am-navy-blue-accent);
+            box-shadow: 0 0 0 0.25rem rgba(0, 45, 98, 0.25); /* Focus ring matching Aeromexico blue */
+            outline: 0;
         }
-        .form-grid {
-             display: grid;
-             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-             gap: 1.5rem;
-        }
-        select:disabled {
-            background-color: #E2E8F0; /* gray-300 */
+        .form-control-custom:disabled {
+            background-color: var(--gray-medium);
             cursor: not-allowed;
         }
-        hr {
-            grid-column: 1 / -1;
-            border-color: #CBD5E0; /* gray-400 */
+
+        /* Result grid layout - Corrected for alignment */
+        .result-grid {
+            display: grid;
+            grid-template-columns: max-content 1fr; /* First column takes exactly content width, second takes remaining */
+            gap: 0.75rem 2rem; 
+            align-items: baseline; /* Align items by their text baseline for better visual flow */
+            font-size: 1rem;
+        }
+        .result-grid span:nth-child(odd),
+        .result-grid h6,
+        .result-grid .fs-5 { /* Ensure all first column labels/titles are left-aligned and nowrap */
+            font-weight: 500; /* Adjusted for consistency with labels */
+            color: var(--text-muted); /* Consistent text color */
+            white-space: nowrap; /* Prevent labels from wrapping */
+            text-align: left; /* Ensure labels are left-aligned in their cell */
+        }
+        /* MODIFIED: Ensure all values are right-aligned */
+        .result-grid span:nth-child(even),
+        .result-grid .net-pay,
+        .result-grid .deduction-amount { 
+            font-weight: 600;
+            text-align: right; /* Values right-aligned within their cell */
+            color: var(--text-dark);
+        }
+
+        /* Specific styles for elements that should span across grid columns within result-grid */
+        .result-grid .grid-span-2 {
+            grid-column: 1 / -1; /* Span across both columns */
+            text-align: left; /* Align title/subtitle to the left */
+        }
+
+
+        /* Button styling */
+        .btn-custom-primary {
+            background-color: var(--am-navy-blue);
+            border-color: var(--am-navy-blue);
+            color: white;
+            font-weight: 700;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-custom-primary:hover {
+            background-color: var(--am-navy-blue-dark);
+            border-color: var(--am-navy-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .btn-custom-secondary {
+            background-color: var(--rosa-mexicano);
+            border-color: var(--rosa-mexicano);
+            color: white;
+            font-weight: 700;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-custom-secondary:hover {
+            background-color: var(--rosa-mexicano-dark);
+            border-color: var(--rosa-mexicano-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .btn-custom-outline {
+            border: 1px solid var(--am-navy-blue);
+            color: var(--am-navy-blue);
+            background-color: transparent;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .btn-custom-outline:hover {
+            background-color: var(--am-navy-blue-light);
+            color: var(--am-navy-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Tab specific styles */
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border: 1px solid transparent;
+            color: var(--text-dark);
+            background-color: transparent;
+        }
+        .tab-button.active {
+            background-color: var(--am-navy-blue);
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .tab-button:not(.active):hover {
+            background-color: var(--gray-medium);
+            color: var(--am-navy-blue-dark);
+        }
+        .tab-container {
+            background-color: var(--gray-light);
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Animations */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeInScale { animation: fadeInScale 0.7s ease-out forwards; }
+        .animate-slideInUp { animation: slideInUp 0.6s ease-out forwards; }
+
+        /* Loading spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--am-navy-blue);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom Modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1050; /* Sit on top of everything */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            position: relative;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+            animation: fadeInScale 0.3s forwards;
+        }
+        .modal-close-btn {
+            color: #aaa;
+            font-size: 1.8rem;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .modal-close-btn:hover,
+        .modal-close-btn:focus {
+            color: #333;
+            text-decoration: none;
         }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="selection:bg-blue-200 selection:text-blue-900">
 
-    <div class="container mx-auto max-w-4xl bg-white p-6 sm:p-8 my-8 rounded-xl shadow-lg">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-blue-800">Calculadora de Salario de Piloto</h1>
-            <p class="text-gray-600 mt-2">Estimación basada en CCT AVSA (Tabulador Oficial Oct. 2024)</p>
-            <p class="text-gray-500 text-sm mt-1">Creado por BAZAN</p>
+    <div class="container my-5 main-container animate-fadeInScale">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold text-am-navy-blue-dark">Calculadora de Salario de Piloto</h1>
+            <p class="lead text-muted mt-2" style="color: var(--rosa-mexicano);">Estimación detallada basada en CCT AVSA (Tabulador Oficial Oct. 2024)</p>
+            <p class="text-secondary-emphasis small mt-1" style="color: var(--rosa-mexicano) !important;">Herramienta desarrollada por <span class="fw-bold" style="color: var(--rosa-mexicano);">BAZAN</span></p>
         </div>
 
-        <form id="salaryForm">
-            <fieldset class="border border-gray-300 rounded-lg p-4 mb-6">
-                <legend class="text-lg font-bold text-blue-700 px-2">Datos para Cálculo</legend>
-                <div class="form-grid mt-4">
-                    <div class="form-group">
-                        <label for="tipoContrato" class="mb-1 font-medium text-gray-700">Tipo de Contrato:</label>
-                        <select id="tipoContrato" name="tipoContrato" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="contratoB">Contrato Post-2010</option>
-                            <option value="contratoA">Contrato Pre-2010</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="anosAntiguedad" class="mb-1 font-medium text-gray-700">Años de Antigüedad:</label>
-                        <input type="number" id="anosAntiguedad" name="anosAntiguedad" placeholder="Ej: 8" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div class="form-group">
-                        <label for="posicion" class="mb-1 font-medium text-gray-700">Posición:</label>
-                        <select id="posicion" name="posicion" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="comandante">Comandante</option>
-                            <option value="copiloto">Copiloto</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="equipo" class="mb-1 font-medium text-gray-700">Equipo:</label>
-                        <select id="equipo" name="equipo" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="737">B737</option>
-                            <option value="787">B787</option>
-                        </select>
-                    </div>
-                     <div class="form-group">
-                        <label for="esAsesor" class="mb-1 font-medium text-gray-700">¿Es Asesor/Instructor?</label>
-                        <select id="esAsesor" name="esAsesor" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="no">No</option>
-                            <option value="si">Sí</option>
-                        </select>
-                    </div>
-                     <div class="form-group">
-                        <label for="vacaciones" class="mb-1 font-medium text-gray-700">¿Vacaciones?</label>
-                        <select id="vacaciones" name="vacaciones" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="no">No</option>
-                            <option value="si">Sí (Calcular Prima)</option>
-                        </select>
-                    </div>
-                </div>
-            </fieldset>
+        <div class="d-flex justify-content-center mb-5 tab-container">
+            <button id="tabA" class="tab-button active" data-contract="contratoA">Contrato A</button>
+            <button id="tabB" class="tab-button" data-contract="contratoB">Contrato B</button>
+        </div>
 
-            <fieldset class="border border-gray-300 rounded-lg p-4 mb-6">
-                <legend class="text-lg font-bold text-blue-700 px-2">Conceptos de Pago Variables (Mensuales)</legend>
-                <div class="form-grid mt-4">
-                    <div class="form-group">
-                        <label for="tvacHoras" class="mb-1 font-medium text-gray-700">TVAc (Tiempo Vuelo Acum.):</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="tvacHoras" value="74" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <span class="font-bold text-gray-500">:</span>
-                            <input type="number" id="tvacMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <form id="salaryForm" class="row g-4">
+            <div class="col-12">
+                <fieldset class="border rounded-lg p-4 bg-light shadow-sm">
+                    <legend class="section-title">
+                        <i class="fas fa-info-circle me-3" style="color: var(--am-navy-blue-accent);"></i> Datos para Cálculo
+                    </legend>
+                    <div class="row g-3">
+                        <input type="hidden" id="tipoContrato" name="tipoContrato" value="contratoA">
+                        
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="anosAntiguedad" class="form-label">Años de Antigüedad:</label>
+                                <input type="number" id="anosAntiguedad" name="anosAntiguedad" placeholder="Ej: 8" min="1" class="form-control form-control-custom">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="posicion" class="form-label">Posición:</label>
+                                <select id="posicion" name="posicion" class="form-select form-control-custom">
+                                    <option value="comandante">Comandante</option>
+                                    <option value="copiloto">Copiloto</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="equipo" class="form-label">Equipo:</label>
+                                <select id="equipo" name="equipo" class="form-select form-control-custom">
+                                    <option value="737">B737</option>
+                                    <option value="787">B787</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="esAsesor" class="form-label">¿Es Asesor/Instructor?</label>
+                                <select id="esAsesor" name="esAsesor" class="form-select form-control-custom">
+                                    <option value="no">No</option>
+                                    <option value="si">Sí</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="vacaciones" class="form-label">¿Vacaciones?</label>
+                                <select id="vacaciones" name="vacaciones" class="form-select form-control-custom">
+                                    <option value="no">No</option>
+                                    <option value="si">Sí (Calcular Prima)</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="tesdHoras" class="mb-1 font-medium text-gray-700">TESD (T.E. Servicio Diario):</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="tesdHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <span class="font-bold text-gray-500">:</span>
-                            <input type="number" id="tesdMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="tevdHoras" class="mb-1 font-medium text-gray-700">TEVD (T.E. Vuelo Diario):</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="tevdHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <span class="font-bold text-gray-500">:</span>
-                            <input type="number" id="tevdMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                     <div class="form-group">
-                        <label for="tevmHoras" class="mb-1 font-medium text-gray-700">TEVM (T.E. Vuelo Mensual):</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="tevmHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <span class="font-bold text-gray-500">:</span>
-                            <input type="number" id="tevmMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="jornadaNocturnaHoras" class="mb-1 font-medium text-gray-700">Jornada Nocturna:</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="jornadaNocturnaHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <span class="font-bold text-gray-500">:</span>
-                            <input type="number" id="jornadaNocturnaMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="eLearningHoras" class="mb-1 font-medium text-gray-700">E-Learning:</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="eLearningHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <span class="font-bold text-gray-500">:</span>
-                            <input type="number" id="eLearningMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="irreServHoras" class="mb-1 font-medium text-gray-700">IRRE. SERV.:</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="irreServHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <span class="font-bold text-gray-500">:</span>
-                            <input type="number" id="irreServMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                     <div class="form-group">
-                        <label for="irreVloHoras" class="mb-1 font-medium text-gray-700">IRRE. VLO.:</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="irreVloHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <span class="font-bold text-gray-500">:</span>
-                            <input type="number" id="irreVloMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="redDesHoras" class="mb-1 font-medium text-gray-700">RED. DES.:</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="redDesHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <span class="font-bold text-gray-500">:</span>
-                            <input type="number" id="redDesMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                     <div class="form-group">
-                        <label for="teReservaHoras" class="mb-1 font-medium text-gray-700">TE Reserva:</label>
-                        <div class="flex items-center gap-2">
-                            <input type="number" id="teReservaHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <span class="font-bold text-gray-500">:</span>
-                            <input type="number" id="teReservaMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="fo7Dia" class="mb-1 font-medium text-gray-700">FO/7° Día:</label>
-                        <input type="number" id="fo7Dia" name="fo7Dia" value="0" placeholder="Días" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                </div>
-            </fieldset>
+                </fieldset>
+            </div>
 
-            <fieldset class="border border-gray-300 rounded-lg p-4 mb-6">
-                <legend class="text-lg font-bold text-blue-700 px-2">Deducciones (Catorcenal)</legend>
-                 <div class="form-grid mt-4">
-                    <div class="form-group">
-                        <label for="aspenAdicional" class="mb-1 font-medium text-gray-700">ASPEN Adicional:</label>
-                        <input type="number" id="aspenAdicional" name="aspenAdicional" value="0" placeholder="$" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <div class="col-12 mt-4">
+                <fieldset class="border rounded-lg p-4 bg-light shadow-sm">
+                    <legend class="section-title" style="color: var(--rosa-mexicano-dark); background-color: var(--rosa-mexicano-light);">
+                        <i class="fas fa-file-upload me-3" style="color: var(--rosa-mexicano);"></i> Carga de PDF (Simulada)
+                    </legend>
+                    <div class="d-flex flex-column align-items-center justify-content-center p-3">
+                        <p class="text-muted text-center mb-3">
+                            Debido a limitaciones de seguridad y complejidad, esta función simula el análisis de un PDF. 
+                            Los campos de "Conceptos de Pago Variables" se auto-rellenarán con datos de ejemplo.
+                        </p>
+                        <input type="file" id="pdfUpload" accept=".pdf" class="form-control form-control-custom w-100 mb-3" style="max-width: 300px;" aria-label="Subir archivo PDF">
+                        <button type="button" id="simulatePdfParseBtn" class="btn btn-custom-secondary d-flex align-items-center justify-content-center px-4 py-2">
+                            <span id="simulatePdfParseBtnText"><i class="fas fa-magic me-2"></i> Simular Análisis y Rellenar</span>
+                            <div id="pdfLoadingSpinner" class="spinner-border spinner-border-sm text-light d-none" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </button>
+                        <p id="pdfSimulationMessage" class="text-muted small mt-3 d-none"></p>
                     </div>
-                    <div class="form-group">
-                        <label for="ajusteAspa" class="mb-1 font-medium text-gray-700">Ajuste ASPA:</label>
-                        <input type="number" id="ajusteAspa" name="ajusteAspa" value="0" placeholder="$" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                </div>
-            </fieldset>
+                </fieldset>
+            </div>
 
-            <div class="flex justify-center gap-4 mt-4">
-                <button type="button" id="calculateBtn" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">Calcular Salario</button>
-                <button type="button" id="resetBtn" class="px-8 py-3 bg-gray-600 text-white font-bold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all">Limpiar</button>
+            <div class="col-12 mt-4">
+                <fieldset class="border rounded-lg p-4 bg-light shadow-sm">
+                    <legend class="section-title">
+                        <i class="fas fa-plane-departure me-3" style="color: var(--am-navy-blue-accent);"></i> Conceptos de Pago Variables (Mensuales)
+                    </legend>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="tesdHoras" class="form-label">TESD (T.E. Servicio Diario):</label>
+                                <div class="input-group">
+                                    <input type="number" id="tesdHoras" value="0" min="0" placeholder="HH" class="form-control form-control-custom">
+                                    <span class="input-group-text">:</span>
+                                    <input type="number" id="tesdMinutos" value="0" min="0" max="59" placeholder="MM" class="form-control form-control-custom">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="tevdHoras" class="form-label">TEVD (T.E. Vuelo Diario):</label>
+                                <div class="input-group">
+                                    <input type="number" id="tevdHoras" value="0" min="0" placeholder="HH" class="form-control form-control-custom">
+                                    <span class="input-group-text">:</span>
+                                    <input type="number" id="tevdMinutos" value="0" min="0" max="59" placeholder="MM" class="form-control form-control-custom">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="tevmHoras" class="form-label">TEVM (T.E. Vuelo Mensual):</label>
+                                <div class="input-group">
+                                    <input type="number" id="tevmHoras" value="0" min="0" placeholder="HH" class="form-control form-control-custom">
+                                    <span class="input-group-text">:</span>
+                                    <input type="number" id="tevmMinutos" value="0" min="0" max="59" placeholder="MM" class="form-control form-control-custom">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="jornadaNocturnaHoras" class="form-label">Jornada Nocturna:</label>
+                                <div class="input-group">
+                                    <input type="number" id="jornadaNocturnaHoras" value="0" min="0" placeholder="HH" class="form-control form-control-custom">
+                                    <span class="input-group-text">:</span>
+                                    <input type="number" id="jornadaNocturnaMinutos" value="0" min="0" max="59" placeholder="MM" class="form-control form-control-custom">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="eLearningHoras" class="form-label">E-Learning:</label>
+                                <div class="input-group">
+                                    <input type="number" id="eLearningHoras" value="0" min="0" placeholder="HH" class="form-control form-control-custom">
+                                    <span class="input-group-text">:</span>
+                                    <input type="number" id="eLearningMinutos" value="0" min="0" max="59" placeholder="MM" class="form-control form-control-custom">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="irreServHoras" class="form-label">IRRE. SERV.:</label>
+                                <div class="input-group">
+                                    <input type="number" id="irreServHoras" value="0" min="0" placeholder="HH" class="form-control form-control-custom">
+                                    <span class="input-group-text">:</span>
+                                    <input type="number" id="irreServMinutos" value="0" min="0" max="59" placeholder="MM" class="form-control form-control-custom">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="irreVloHoras" class="form-label">IRRE. VLO.:</label>
+                                <div class="input-group">
+                                    <input type="number" id="irreVloHoras" value="0" min="0" placeholder="HH" class="form-control form-control-custom">
+                                    <span class="input-group-text">:</span>
+                                    <input type="number" id="irreVloMinutos" value="0" min="0" max="59" placeholder="MM" class="form-control form-control-custom">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="redDesHoras" class="form-label">RED. DES.:</label>
+                                <div class="input-group">
+                                    <input type="number" id="redDesHoras" value="0" min="0" placeholder="HH" class="form-control form-control-custom">
+                                    <span class="input-group-text">:</span>
+                                    <input type="number" id="redDesMinutos" value="0" min="0" max="59" placeholder="MM" class="form-control form-control-custom">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="teReservaHoras" class="form-label">TE Reserva:</label>
+                                <div class="input-group">
+                                    <input type="number" id="teReservaHoras" value="0" min="0" placeholder="HH" class="form-control form-control-custom">
+                                    <span class="input-group-text">:</span>
+                                    <input type="number" id="teReservaMinutos" value="0" min="0" max="59" placeholder="MM" class="form-control form-control-custom">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="fo7Dia" class="form-label">FO/7° Día:</label>
+                                <input type="number" id="fo7Dia" name="fo7Dia" value="0" placeholder="Días" class="form-control form-control-custom">
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="col-12 mt-4">
+                <fieldset class="border rounded-lg p-4 bg-light shadow-sm">
+                    <legend class="section-title" style="color: var(--am-red); background-color: var(--am-red-light);">
+                        <i class="fas fa-minus-circle me-3" style="color: var(--am-red);"></i> Deducciones (Catorcenal)
+                    </legend>
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="aspenAdicional" class="form-label">ASPEN Adicional:</label>
+                                <input type="number" id="aspenAdicional" name="aspenAdicional" value="0" placeholder="$" class="form-control form-control-custom">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="ajusteAspa" class="form-label">Ajuste ASPA:</label>
+                                <input type="number" id="ajusteAspa" name="ajusteAspa" value="0" placeholder="$" class="form-control form-control-custom">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="form-group">
+                                <label for="otrasDeducciones" class="form-label">Otras Deducciones:</label>
+                                <input type="number" id="otrasDeducciones" name="otrasDeducciones" value="0" placeholder="$" class="form-control form-control-custom">
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="col-12 text-center mt-5">
+                <button type="button" id="calculateBtn" class="btn btn-custom-primary btn-lg me-3">
+                    <span id="calculateBtnText"><i class="fas fa-calculator me-2"></i> Calcular Salario</span>
+                    <div id="loadingSpinner" class="spinner-border spinner-border-sm text-light d-none" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </button>
+                <button type="button" id="resetBtn" class="btn btn-custom-outline btn-lg">
+                    <i class="fas fa-redo-alt me-2"></i> Limpiar
+                </button>
             </div>
         </form>
 
-        <div id="results" class="mt-10"></div>
-
+        <div id="results" class="mt-5"></div>
     </div>
 
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close-btn">&times;</span>
+            <h3 id="modalTitle" class="h4 mb-3 text-am-navy-blue-dark"></h3>
+            <p id="modalMessage" class="mb-4 text-secondary"></p>
+            <button id="modalCloseButton" class="btn btn-custom-primary">Cerrar</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
     <script>
+        // Data for salary calculations (Contract B data is explicitly duplicated from A to avoid reference issues)
         const CCT_DATA = {
             salarios: {
                 contratoA: {
                     copiloto: {'737':[67925.51,69311.74,70726.31,72169.70,73642.55,75115.40,75115.40,75115.40,75115.40,76617.70,78150.06,79713.06,81307.32,82933.47,84592.14,86283.98,88009.66,89769.85,91565.25],'787':[79396.35,81016.68,82670.08,84357.20,86078.80,87800.38,87800.38,87800.38,87800.38,89556.39,91347.52,93174.47,95037.96,96938.71,98877.49,100855.04,102872.14,104929.58,107028.17]},
                     comandante: {'737':[111353.32,113625.83,115944.77,118310.98,120725.49,123140.00,123140.00,123140.00,123140.00,125602.80,128114.86,130677.15,133290.70,135956.51,138675.64,141449.15,144278.14,147163.70,150106.97],'787':[130157.95,132814.23,135524.78,138290.53,141112.82,143935.08,143935.08,143935.08,143935.08,146813.78,149750.06,152745.06,155799.96,158915.96,162094.28,165336.16,168642.89,172015.74,175456.06]}
                 },
-                contratoB: {
+                // Deep copy of contratoA data for contratoB
+                contratoB: JSON.parse(JSON.stringify({ // Use JSON methods for deep copy
                     copiloto: {'737':[67925.51,69311.74,70726.31,72169.70,73642.55,75115.40,75115.40,75115.40,75115.40,76617.70,78150.06,79713.06,81307.32,82933.47,84592.14,86283.98,88009.66,89769.85,91565.25],'787':[79396.35,81016.68,82670.08,84357.20,86078.80,87800.38,87800.38,87800.38,87800.38,89556.39,91347.52,93174.47,95037.96,96938.71,98877.49,100855.04,102872.14,104929.58,107028.17]},
                     comandante: {'737':[111353.32,113625.83,115944.77,118310.98,120725.49,123140.00,123140.00,123140.00,123140.00,125602.80,128114.86,130677.15,133290.70,135956.51,138675.64,141449.15,144278.14,147163.70,150106.97],'787':[130157.95,132814.23,135524.78,138290.53,141112.82,143935.08,143935.08,143935.08,143935.08,146813.78,149750.06,152745.06,155799.96,158915.96,162094.28,165336.16,168642.89,172015.74,175456.06]}
-                }
+                }))
             },
             porcentajesAportaciones: { 
                 contratoA: { sindical: 0.15, fcaa: 0.08, garantia: 0.57, tienda: 7542.21 },
@@ -248,39 +559,101 @@
         };
 
         // --- Helper functions ---
+        /**
+         * Parses hours and minutes from two input fields into a single decimal hour value.
+         * @param {string} horasId - ID of the hours input field.
+         * @param {string} minutosId - ID of the minutes input field.
+         * @returns {number} Total time in hours (e.g., 1.5 for 1 hour 30 minutes).
+         */
         function parseTime(horasId, minutosId) {
             const horas = parseFloat(document.getElementById(horasId).value) || 0;
             const minutos = parseFloat(document.getElementById(minutosId).value) || 0;
             return horas + (minutos / 60);
         }
 
+        /**
+         * Retrieves the tabular salary based on contract type, position, equipment, and years of seniority.
+         * @param {string} tc - Tipo de contrato ('contratoA' or 'contratoB').
+         * @param {string} pos - Posición ('copiloto' or 'comandante').
+         * @param {string} eq - Equipo ('737' or '787').
+         * @param {number} yrs - Años de antigüedad.
+         * @returns {number} The corresponding monthly tabular salary.
+         */
         function getSalarioTabular(tc, pos, eq, yrs) {
             const tabulador = CCT_DATA.salarios[tc]?.[pos]?.[eq];
-            if (!tabulador) return 0;
-            const index = Math.max(0, yrs - 1);
-            const finalIndex = Math.min(index, tabulador.length - 1);
+            if (!tabulador) {
+                console.error(`Tabulador no encontrado para tc: ${tc}, pos: ${pos}, eq: ${eq}`);
+                return 0;
+            }
+            const index = Math.max(0, yrs - 1); // Seniority starts from year 1 at index 0
+            const finalIndex = Math.min(index, tabulador.length - 1); // Cap at max available seniority
             return tabulador[finalIndex] || 0;
         }
 
+        /**
+         * Gets the maximum salary for a Comandante for a specific contract and equipment.
+         * Used for asesor/instructor calculation.
+         * @param {string} tc - Tipo de contrato.
+         * @param {string} eq - Equipo.
+         * @returns {number} Maximum Comandante salary.
+         */
         function getSalarioMaximo(tc, eq) {
-             const tabulador = CCT_DATA.salarios[tc]?.comandante?.[eq];
-             if (!tabulador || tabulador.length === 0) return 0;
-             return Math.max(...tabulador);
+            const tabulador = CCT_DATA.salarios[tc]?.comandante?.[eq];
+            if (!tabulador || tabulador.length === 0) return 0;
+            return Math.max(...tabulador);
         }
         
-        function getCostoHoraExtraVuelo(tc, eq) { return CCT_DATA.costoHoraExtraVuelo[tc]?.[eq] || 0; }
+        /**
+         * Gets the cost per extra flight hour based on contract and equipment.
+         * @param {string} tc - Tipo de contrato.
+         * @param {string} eq - Equipo.
+         * @returns {number} Cost per extra flight hour.
+         */
+        function getCostoHoraExtraVuelo(tc, eq) {
+            return CCT_DATA.costoHoraExtraVuelo[tc]?.[eq] || 0;
+        }
         
+        /**
+         * Calculates vacation days based on years of seniority.
+         * @param {number} yrs - Años de antigüedad.
+         * @returns {number} Number of vacation days.
+         */
         function getDiasVacaciones(yrs) {
             if (yrs <= 0) return 0;
             if (yrs === 1) return 30;
             return 30 + (yrs - 1);
         }
 
-        const currencyFormatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
+        // Currency formatter for MXN
+        const currencyFormatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 });
         
+        // --- DOM Elements ---
         const posicionSelect = document.getElementById('posicion');
         const asesorSelect = document.getElementById('esAsesor');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const resultsDiv = document.getElementById('results');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const calculateBtnText = document.getElementById('calculateBtnText');
+        const tipoContratoHiddenInput = document.getElementById('tipoContrato');
 
+        // Tab elements
+        const tabAButton = document.getElementById('tabA');
+        const tabBButton = document.getElementById('tabB');
+
+        // PDF Simulation elements
+        const simulatePdfParseBtn = document.getElementById('simulatePdfParseBtn');
+        const pdfLoadingSpinner = document.getElementById('pdfLoadingSpinner');
+        const simulatePdfParseBtnText = document.getElementById('simulatePdfParseBtnText');
+        const pdfSimulationMessage = document.getElementById('pdfSimulationMessage');
+
+        const customModal = document.getElementById('customModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalCloseBtn = document.getElementById('modalCloseButton');
+        const closeSpan = document.querySelector('.modal-close-btn');
+
+        // --- Event Listeners ---
         posicionSelect.addEventListener('change', () => {
             if(posicionSelect.value === 'copiloto') {
                 asesorSelect.value = 'no';
@@ -290,24 +663,144 @@
             }
         });
         
-        document.getElementById('calculateBtn').addEventListener('click', calculateSalary);
-        document.getElementById('resetBtn').addEventListener('click', resetForm);
+        calculateBtn.addEventListener('click', () => {
+            // Show loading spinner and disable button
+            calculateBtnText.classList.add('d-none'); // Use Bootstrap d-none
+            loadingSpinner.classList.remove('d-none');
+            calculateBtn.disabled = true;
+            resetBtn.disabled = true;
 
+            // Simulate a delay for calculation (e.g., if it were an API call)
+            setTimeout(() => {
+                calculateSalary();
+                // Hide loading spinner and re-enable button
+                calculateBtnText.classList.remove('d-none');
+                loadingSpinner.classList.add('d-none');
+                calculateBtn.disabled = false;
+                resetBtn.disabled = false;
+            }, 500); // 0.5 second delay
+        });
+        resetBtn.addEventListener('click', resetForm);
+
+        // Tab click handlers
+        tabAButton.addEventListener('click', () => {
+            setActiveTab('contratoA');
+        });
+        tabBButton.addEventListener('click', () => {
+            setActiveTab('contratoB');
+        });
+
+        // PDF simulation click handler
+        simulatePdfParseBtn.addEventListener('click', () => {
+            pdfSimulationMessage.classList.add('d-none'); // Clear previous messages
+            simulatePdfParseBtnText.classList.add('d-none');
+            pdfLoadingSpinner.classList.remove('d-none');
+            simulatePdfParseBtn.disabled = true;
+
+            // Simulate PDF parsing and auto-fill
+            setTimeout(() => {
+                // Example data to auto-fill for demonstration purposes
+                document.getElementById('tesdHoras').value = 10;
+                document.getElementById('tesdMinutos').value = 30;
+                document.getElementById('tevdHoras').value = 5;
+                document.getElementById('tevdMinutos').value = 45;
+                document.getElementById('tevmHoras').value = 80;
+                document.getElementById('tevmMinutos').value = 0;
+                document.getElementById('jornadaNocturnaHoras').value = 15;
+                document.getElementById('jornadaNocturnaMinutos').value = 0;
+                document.getElementById('eLearningHoras').value = 2;
+                document.getElementById('eLearningMinutos').value = 0;
+                document.getElementById('irreServHoras').value = 1;
+                document.getElementById('irreServMinutos').value = 0;
+                document.getElementById('irreVloHoras').value = 0;
+                document.getElementById('irreVloMinutos').value = 30;
+                document.getElementById('redDesHoras').value = 0;
+                document.getElementById('redDesMinutos').value = 0;
+                document.getElementById('teReservaHoras').value = 4;
+                document.getElementById('teReservaMinutos').value = 0;
+                document.getElementById('fo7Dia').value = 1;
+                document.getElementById('aspenAdicional').value = 250;
+                document.getElementById('ajusteAspa').value = 50;
+                document.getElementById('otrasDeducciones').value = 100;
+
+                pdfSimulationMessage.textContent = "¡Campos auto-rellenados con datos de ejemplo!";
+                pdfSimulationMessage.classList.remove('d-none');
+                pdfSimulationMessage.style.color = 'var(--am-navy-blue)'; // Positive feedback using Aeromexico blue
+                
+                pdfLoadingSpinner.classList.add('d-none');
+                simulatePdfParseBtnText.classList.remove('d-none');
+                simulatePdfParseBtn.disabled = false;
+            }, 1500); // Simulate 1.5 seconds of processing
+        });
+
+
+        // Modal event listeners
+        closeSpan.addEventListener('click', closeModal);
+        modalCloseBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (event) => {
+            if (event.target === customModal) {
+                closeModal();
+            }
+        });
+
+        /**
+         * Sets the active tab and updates the hidden contract type input.
+         * @param {string} contractType - 'contratoA' or 'contratoB'.
+         */
+        function setActiveTab(contractType) {
+            // Update active button styling
+            if (contractType === 'contratoA') {
+                tabAButton.classList.add('active');
+                tabBButton.classList.remove('active');
+            } else {
+                tabBButton.classList.add('active');
+                tabAButton.classList.remove('active');
+            }
+            // Update the hidden input value
+            tipoContratoHiddenInput.value = contractType;
+            // Clear results when switching tabs
+            resultsDiv.innerHTML = '';
+        }
+
+        /**
+         * Displays a custom modal with a title and message.
+         * @param {string} title - The title for the modal.
+         * @param {string} message - The message content for the modal.
+         */
+        function showModal(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            customModal.style.display = 'flex'; // Show modal
+        }
+
+        /**
+         * Hides the custom modal.
+         */
+        function closeModal() {
+            customModal.style.display = 'none'; // Hide modal
+        }
+
+        /**
+         * Main function to calculate and display the pilot's salary.
+         */
         function calculateSalary() {
             // --- 1. READ & VALIDATE FORM DATA ---
-            const tipoContrato = document.getElementById('tipoContrato').value;
+            // Get contract type from the hidden input, which is controlled by tabs
+            const tipoContrato = tipoContratoHiddenInput.value;
             const anosAntiguedad = parseInt(document.getElementById('anosAntiguedad').value);
             const posicion = document.getElementById('posicion').value;
             const equipo = document.getElementById('equipo').value;
             const esAsesor = posicion === 'comandante' && document.getElementById('esAsesor').value === 'si';
             const isVacaciones = document.getElementById('vacaciones').value === 'si';
 
-            if (isNaN(anosAntiguedad) || anosAntiguedad <= 0) {
-                alert("Por favor, ingresa un número válido y mayor a 0 para los años de antigüedad.");
+            // Basic validation for years of seniority
+            if (isNaN(anosAntiguedad) || anosAntiguedad < 1) {
+                showModal("Error de Entrada", "Por favor, ingresa un número válido y mayor a 0 para los años de antigüedad.");
+                resultsDiv.innerHTML = ''; // Clear previous results if any
                 return;
             }
 
-            const tvac = parseTime('tvacHoras', 'tvacMinutos');
+            // Parse variable time inputs
             const tesd = parseTime('tesdHoras', 'tesdMinutos');
             const tevd = parseTime('tevdHoras', 'tevdMinutos');
             const tevm = parseTime('tevmHoras', 'tevmMinutos');
@@ -319,29 +812,31 @@
             const teReserva = parseTime('teReservaHoras', 'teReservaMinutos');
             const fo7Dia = parseFloat(document.getElementById('fo7Dia').value) || 0;
             
+            // Deductions
             const isrPorcentaje = tipoContrato === 'contratoB' ? 34 : 35;
-            const imssEstimado = 1079.86; 
+            const imssEstimado = 1079.86;
             const aspenAdicional = parseFloat(document.getElementById('aspenAdicional').value) || 0;
             const ajusteAspa = parseFloat(document.getElementById('ajusteAspa').value) || 0;
+            const otrasDeducciones = parseFloat(document.getElementById('otrasDeducciones').value) || 0;
 
-            // --- 2. CALCULATE BASE EARNINGS ---
+            // --- 2. CALCULATE BASE EARNINGS (Monthly first, then catorcenal) ---
             const salarioTabularMensual = getSalarioTabular(tipoContrato, posicion, equipo, anosAntiguedad);
             const salarioDiarioTabular = salarioTabularMensual / 30;
-            
+
             const p = CCT_DATA.porcentajesAportaciones[tipoContrato];
+
             const fcaaMensual = salarioTabularMensual * p.fcaa;
             const clausulaSindicalMensual = salarioTabularMensual * p.sindical;
             const despensaCatorcenal = CCT_DATA.despensaCatorcenal;
             
-            let salarioOrdinarioDiario;
-            let bonoRecMensual, besMensual;
+            let salarioOrdinarioDiario, bonoRecMensual, besMensual;
 
             if (tipoContrato === 'contratoB') {
                 bonoRecMensual = salarioTabularMensual * p.reconocimiento;
                 besMensual = salarioTabularMensual * p.equidad;
                 const salarioOrdinarioMensual = salarioTabularMensual + bonoRecMensual + besMensual + clausulaSindicalMensual + fcaaMensual;
                 salarioOrdinarioDiario = salarioOrdinarioMensual / 30;
-            } else { // Contrato A
+            } else {
                 bonoRecMensual = CCT_DATA.bonosFijos.contratoA.reconocimiento[posicion] || 0;
                 besMensual = CCT_DATA.bonosFijos.contratoA.equidad[posicion] || 0;
                 const salarioOrdinarioMensual = salarioTabularMensual * (1 + p.garantia) + clausulaSindicalMensual + fcaaMensual + p.tienda;
@@ -366,11 +861,11 @@
 
             // --- 3. CALCULATE VARIABLE & EXTRA PAYMENTS ---
             const costoHoraExtraVuelo = getCostoHoraExtraVuelo(tipoContrato, equipo);
-            const pagoTEVM74 = Math.max(0, tvac - 74) * costoHoraExtraVuelo;
+            // Reverted to original logic where variable payments are not divided by 2
             const pagoTESD = tesd * (salarioTabularMensual * 0.01);
             const pagoTEVD = tevd * (salarioTabularMensual * (tipoContrato === 'contratoB' ? 0.0125 : 0.02));
             const pagoTEVM = tevm * (salarioTabularMensual * (tipoContrato === 'contratoB' ? 0.04 : 0.03));
-            const pagoJornadaNocturna = jornadaNocturna * salarioDiarioTabular * 0.20;
+            const pagoJornadaNocturna = jornadaNocturna * salarioDiarioTabular * 0.03;
             const pagoELearning = eLearning * 2 * (salarioDiarioTabular / 8);
             const pagoIrreServ = irreServ * salarioDiarioTabular * 0.25;
             const pagoIrreVlo = irreVlo * costoHoraExtraVuelo * 2;
@@ -378,7 +873,7 @@
             const pagoFo7Dia = fo7Dia * salarioOrdinarioDiario * 3;
             const pagoTeReserva = teReserva * salarioDiarioTabular * 0.25;
 
-            const totalPagosVariables = pagoTEVM74 + pagoTESD + pagoTEVD + pagoTEVM + pagoJornadaNocturna + pagoELearning + pagoIrreServ + pagoIrreVlo + pagoRedDes + pagoFo7Dia + pagoTeReserva;
+            const totalPagosVariables = pagoTESD + pagoTEVD + pagoTEVM + pagoJornadaNocturna + pagoELearning + pagoIrreServ + pagoIrreVlo + pagoRedDes + pagoFo7Dia + pagoTeReserva;
             
             let primaVacacionalAnual = 0;
             if (isVacaciones) {
@@ -390,17 +885,17 @@
             // --- 4. CALCULATE BI-WEEKLY PAYCHECKS ---
             const catorcenaAltaBruta = percepcionesFijasSinDespensa + totalPagosVariables + primaVacacionalAnual;
             const isrCatorcenaAlta = catorcenaAltaBruta * (isrPorcentaje / 100);
-            const deduccionesCatorcenales = imssEstimado + aspenAdicional + ajusteAspa;
+            const deduccionesCatorcenales = imssEstimado + aspenAdicional + ajusteAspa + otrasDeducciones;
             const catorcenaAltaNeta = catorcenaAltaBruta - isrCatorcenaAlta - deduccionesCatorcenales;
 
             const catorcenaBajaBruta = percepcionesFijasSinDespensa + despensaCatorcenal;
             const isrCatorcenaBaja = catorcenaBajaBruta * (isrPorcentaje / 100);
             const catorcenaBajaNeta = catorcenaBajaBruta - isrCatorcenaBaja - deduccionesCatorcenales;
 
+
             // --- 5. GENERATE DETAILED HTML FOR RESULTS ---
             let desgloseVariablesHTML = '';
             const pagosVariables = {
-                "T.E. Vuelo > 74h (TVAc)": pagoTEVM74,
                 "T.E. Servicio Diario (TESD)": pagoTESD,
                 "T.E. Vuelo Diario (TEVD)": pagoTEVD,
                 "T.E. Vuelo Mensual (TEVM)": pagoTEVM,
@@ -413,88 +908,123 @@
                 "TE Reserva": pagoTeReserva
             };
 
-            let hasVariables = Object.values(pagosVariables).some(v => v > 0);
+            let hasVariables = Object.values(pagosVariables).some(v => v > 0.01);
 
             if (hasVariables) {
-                desgloseVariablesHTML += `<hr><h4 class="text-md font-semibold text-blue-700 col-span-2 mt-2 mb-1">Desglose de Pagos Variables</h4>`;
+                desgloseVariablesHTML += `<h6 class="fw-bold mb-2 grid-span-2" style="color: var(--am-navy-blue);">Desglose de Pagos Variables (Catorcenal)</h6>`;
                 for (const [key, value] of Object.entries(pagosVariables)) {
-                    if (value > 0) {
-                        desgloseVariablesHTML += `<span>${key}:</span> <span>${currencyFormatter.format(value)}</span>`;
+                    if (value > 0.01) {
+                        desgloseVariablesHTML += `<span>${key}:</span> <span class="text-end">${currencyFormatter.format(value)}</span>`;
                     }
                 }
             }
             
-            const percepcionesFijasAltaHTML = `<h4 class="text-md font-semibold text-blue-700 col-span-2 mb-1">Desglose de Percepciones Fijas</h4>
-                                               <span>Sueldo (14 días):</span> <span>${currencyFormatter.format(sueldoCatorcenal)}</span>
-                                               ${esAsesor ? `<span>Comp. Asesor/Instructor:</span> <span>${currencyFormatter.format(compAsesorCatorcenal)}</span>` : ''}
-                                               <span>Fondo Caja Contractual (FCAA):</span> <span>${currencyFormatter.format(fcaaCatorcenal)}</span>
-                                               <span>Cláusula Sindical:</span> <span>${currencyFormatter.format(clausulaSindicalCatorcenal)}</span>
-                                               <span>Bono de Reconocimiento:</span> <span>${currencyFormatter.format(bonoRecCatorcenal)}</span>
-                                               <span>Bono de Equidad Salarial:</span> <span>${currencyFormatter.format(besCatorcenal)}</span>`;
+            const percepcionesFijasAltaHTML = `
+                <h6 class="fw-bold mb-2 grid-span-2" style="color: var(--am-navy-blue);">Percepciones Fijas (Catorcenal)</h6>
+                <span>Sueldo (14 días):</span> <span class="text-end">${currencyFormatter.format(sueldoCatorcenal)}</span>
+                ${esAsesor ? `<span>Comp. Asesor/Instructor:</span> <span class="text-end">${currencyFormatter.format(compAsesorCatorcenal)}</span>` : ''}
+                <span>Fondo Caja Contractual (FCAA):</span> <span class="text-end">${currencyFormatter.format(fcaaCatorcenal)}</span>
+                <span>Cláusula Sindical:</span> <span class="text-end">${currencyFormatter.format(clausulaSindicalCatorcenal)}</span>
+                <span>Bono de Reconocimiento:</span> <span class="text-end">${currencyFormatter.format(bonoRecCatorcenal)}</span>
+                <span>Bono de Equidad Salarial:</span> <span class="text-end">${currencyFormatter.format(besCatorcenal)}</span>
+            `;
 
-            const percepcionesFijasBajaHTML = percepcionesFijasAltaHTML + `<span>Despensa:</span> <span>${currencyFormatter.format(despensaCatorcenal)}</span>`;
+            const percepcionesFijasBajaHTML = percepcionesFijasAltaHTML + `<span>Despensa:</span> <span class="text-end">${currencyFormatter.format(despensaCatorcenal)}</span>`;
 
-            const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
-                <h2 class="text-2xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-6">Resultados de la Estimación</h2>
-                 <div class="result-section bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-bold text-gray-700 mb-4">Datos del Piloto</h3>
-                     <div class="result-grid">
-                        <span>Contrato Seleccionado:</span> <span>${document.getElementById('tipoContrato').options[document.getElementById('tipoContrato').selectedIndex].text}</span>
-                        <span>Años de Antigüedad:</span> <span>${anosAntiguedad}</span>
-                        <span>Salario Tabular Mensual:</span> <span>${currencyFormatter.format(salarioTabularMensual)}</span>
-                        <span>Salario Diario Tabular:</span> <span>${currencyFormatter.format(salarioDiarioTabular)}</span>
-                        <span>Salario Ordinario Diario:</span> <span>${currencyFormatter.format(salarioOrdinarioDiario)}</span>
+                <h2 class="display-6 fw-bold text-center mb-4" style="color: var(--am-navy-blue-dark);">Resultados de la Estimación</h2>
+                <hr class="mb-5">
+                
+                <div class="card p-4 mb-4 animate-slideInUp">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center" style="color: var(--am-navy-blue-dark);">
+                        <i class="fas fa-user-tie me-3" style="color: var(--am-navy-blue-accent);"></i> Datos del Piloto
+                    </h3>
+                    <div class="result-grid">
+                        <span>Contrato Seleccionado:</span> <span>${tipoContrato === 'contratoA' ? 'Contrato A' : 'Contrato B'}</span>
+                        <span>Años de Antigüedad:</span> <span>${anosAntiguedad} años</span>
+                        <span>Posición:</span> <span>${posicion === 'comandante' ? 'Comandante' : 'Copiloto'}</span>
+                        <span>Equipo:</span> <span>${equipo}</span>
+                        <span>Asesor/Instructor:</span> <span>${esAsesor ? 'Sí' : 'No'}</span>
+                        <span>Salario Tabular Mensual:</span> <span class="text-end">${currencyFormatter.format(salarioTabularMensual)}</span>
+                        <span>Salario Diario Tabular:</span> <span class="text-end">${currencyFormatter.format(salarioDiarioTabular)}</span>
+                        <span>Salario Ordinario Diario:</span> <span class="text-end">${currencyFormatter.format(salarioOrdinarioDiario)}</span>
                     </div>
                 </div>
 
-                <div class="result-section bg-blue-50 border border-blue-200 p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-bold text-blue-700 mb-4">Estimación Catorcena con Extras ("Alta")</h3>
+                <div class="card p-4 mb-4 animate-slideInUp" style="animation-delay: 0.1s;">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center" style="color: var(--am-navy-blue-dark);">
+                        <i class="fas fa-money-check-alt me-3" style="color: var(--am-navy-blue-accent);"></i> Estimación Catorcena con Extras ("Alta")
+                    </h3>
                     <div class="result-grid">
                         ${percepcionesFijasAltaHTML}
-                        ${desgloseVariablesHTML}
-                        ${isVacaciones ? `<hr><span>Prima Vacacional (Anual):</span> <span>${currencyFormatter.format(primaVacacionalAnual)}</span>` : ''}
-                        <hr><hr>
-                        <span><strong>Total Bruto Estimado:</strong></span> <span>${currencyFormatter.format(catorcenaAltaBruta)}</span>
-                        <span>ISR Estimado (${isrPorcentaje}%):</span> <span class="text-red-600">-${currencyFormatter.format(isrCatorcenaAlta)}</span>
-                        <span>Deducción IMSS:</span> <span class="text-red-600">-${currencyFormatter.format(imssEstimado)}</span>
-                        <span>ASPEN Adicional:</span> <span class="text-red-600">-${currencyFormatter.format(aspenAdicional)}</span>
-                        <span>Ajuste ASPA:</span> <span class="text-red-600">-${currencyFormatter.format(ajusteAspa)}</span>
-                        <hr><hr>
-                        <span><strong>Neto a Recibir Estimado:</strong></span> <span class="net-pay">${currencyFormatter.format(catorcenaAltaNeta)}</span>
+                        ${hasVariables ? desgloseVariablesHTML : ''}
+                        ${isVacaciones ? `<hr class="my-3 grid-span-2"><span class="text-start">Prima Vacacional (Anual):</span> <span class="text-end">${currencyFormatter.format(primaVacacionalAnual)}</span>` : ''}
+                        
+                        <hr class="my-3 grid-span-2"> <!-- Add grid-span-2 here to ensure the hr spans correctly -->
+                        <span class="fs-5 fw-bold text-start">Total Bruto Estimado:</span> <span class="fs-5 fw-bold text-end">${currencyFormatter.format(catorcenaAltaBruta)}</span>
+                        
+                        <h6 class="fw-bold mt-3 mb-2 grid-span-2" style="color: var(--am-red);">Deducciones:</h6>
+                        <span>ISR Estimado (${isrPorcentaje}%):</span> <span class="deduction-amount text-end">-${currencyFormatter.format(isrCatorcenaAlta)}</span>
+                        <span>Deducción IMSS:</span> <span class="deduction-amount text-end">-${currencyFormatter.format(imssEstimado)}</span>
+                        ${aspenAdicional > 0 ? `<span>ASPEN Adicional:</span> <span class="deduction-amount text-end">-${currencyFormatter.format(aspenAdicional)}</span>` : ''}
+                        ${ajusteAspa > 0 ? `<span>Ajuste ASPA:</span> <span class="deduction-amount text-end">-${currencyFormatter.format(ajusteAspa)}</span>` : ''}
+                        ${otrasDeducciones > 0 ? `<span>Otras Deducciones:</span> <span class="deduction-amount text-end">-${currencyFormatter.format(otrasDeducciones)}</span>` : ''}
+                        <hr class="my-3 grid-span-2"> <!-- Add grid-span-2 here -->
+                        <span class="fs-4 fw-bold text-start">Neto a Recibir Estimado:</span> <strong class="net-pay text-end">${currencyFormatter.format(catorcenaAltaNeta)}</strong>
                     </div>
                 </div>
 
-                <div class="result-section bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-bold text-gray-700 mb-4">Estimación Catorcena Base ("Baja")</h3>
-                     <div class="result-grid">
+                <div class="card p-4 mb-4 animate-slideInUp" style="animation-delay: 0.2s;">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center" style="color: var(--am-navy-blue-dark);">
+                        <i class="fas fa-wallet me-3" style="color: var(--am-navy-blue-accent);"></i> Estimación Catorcena Base ("Baja")
+                    </h3>
+                    <div class="result-grid">
                         ${percepcionesFijasBajaHTML}
-                        <hr><hr>
-                        <span><strong>Total Bruto Estimado:</strong></span> <span>${currencyFormatter.format(catorcenaBajaBruta)}</span>
-                        <span>ISR Estimado (${isrPorcentaje}%):</span> <span class="text-red-600">-${currencyFormatter.format(isrCatorcenaBaja)}</span>
-                        <span>Deducción IMSS:</span> <span class="text-red-600">-${currencyFormatter.format(imssEstimado)}</span>
-                        <span>ASPEN Adicional:</span> <span class="text-red-600">-${currencyFormatter.format(aspenAdicional)}</span>
-                        <span>Ajuste ASPA:</span> <span class="text-red-600">-${currencyFormatter.format(ajusteAspa)}</span>
-                        <hr><hr>
-                        <span><strong>Neto a Recibir Estimado:</strong></span> <strong class="net-pay">${currencyFormatter.format(catorcenaBajaNeta)}</strong>
+                        <hr class="my-3 grid-span-2">
+                        <span class="fs-5 fw-bold text-start">Total Bruto Estimado:</span> <span class="text-end">${currencyFormatter.format(catorcenaBajaBruta)}</span>
+                        <h6 class="fw-bold mt-3 mb-2 grid-span-2" style="color: var(--am-red);">Deducciones:</h6>
+                        <span>ISR Estimado (${isrPorcentaje}%):</span> <span class="deduction-amount text-end">-${currencyFormatter.format(isrCatorcenaBaja)}</span>
+                        <span>Deducción IMSS:</span> <span class="deduction-amount text-end">-${currencyFormatter.format(imssEstimado)}</span>
+                        ${aspenAdicional > 0 ? `<span>ASPEN Adicional:</span> <span class="deduction-amount text-end">-${currencyFormatter.format(aspenAdicional)}</span>` : ''}
+                        ${ajusteAspa > 0 ? `<span>Ajuste ASPA:</span> <span class="deduction-amount text-end">-${currencyFormatter.format(ajusteAspa)}</span>` : ''}
+                        ${otrasDeducciones > 0 ? `<span>Otras Deducciones:</span> <span class="deduction-amount text-end">-${currencyFormatter.format(otrasDeducciones)}</span>` : ''}
+                        <hr class="my-3 grid-span-2">
+                        <span class="fs-4 fw-bold text-start">Neto a Recibir Estimado:</span> <strong class="net-pay text-end">${currencyFormatter.format(catorcenaBajaNeta)}</strong>
                     </div>
                 </div>
                 
-                 <div class="info-section bg-teal-50 border-l-4 border-teal-500 p-4 rounded-r-lg">
-                    <h3 class="text-lg font-bold text-teal-800">Aportaciones (Informativo Mensual)</h3>
-                    <p class="text-teal-700 text-sm mt-1">Montos adicionales que la empresa aporta por ti.</p>
-                    <div class="result-grid mt-2">
-                        <span>Fondo de Ahorro (FCAA):</span> <span>${currencyFormatter.format(fcaaMensual)}</span>
-                        <span>Cláusula Sindical:</span> <span>${currencyFormatter.format(clausulaSindicalMensual)}</span>
+                <div class="card p-4 mb-4 bg-am-navy-blue-light border-start border-5 rounded-lg shadow-sm animate-slideInUp" style="border-color: var(--am-navy-blue-accent) !important; animation-delay: 0.3s;">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center" style="color: var(--am-navy-blue-dark);">
+                        <i class="fas fa-chart-line me-3" style="color: var(--am-navy-blue);"></i> Aportaciones (Informativo Mensual)
+                    </h3>
+                    <p class="text-secondary small mb-3">Estos son montos adicionales que la empresa aporta por ti, no parte de tu salario directo.</p>
+                    <div class="result-grid">
+                        <span>Fondo de Ahorro (FCAA):</span> <span class="text-end">${currencyFormatter.format(fcaaMensual)}</span>
+                        <span>Cláusula Sindical:</span> <span class="text-end">${currencyFormatter.format(clausulaSindicalMensual)}</span>
                     </div>
                 </div>
             `;
+            // Scroll to results after calculation
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
+        /**
+         * Resets the form and clears the results display.
+         */
         function resetForm() {
             document.getElementById('salaryForm').reset();
+            // Ensure disabled state is reset for asesor/instructor
+            posicionSelect.dispatchEvent(new Event('change')); // Trigger change to re-evaluate asesorSelect state
             document.getElementById('results').innerHTML = '';
+            // Reset tab to default (Contrato A)
+            setActiveTab('contratoA');
         }
+
+        // Initialize with default active tab
+        setActiveTab('contratoA');
+
+        // Initial check for asesorSelect disabled state on load
+        posicionSelect.dispatchEvent(new Event('change'));
     </script>
 
 </body>
