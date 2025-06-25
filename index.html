@@ -1,72 +1,187 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Nómina de Piloto (Estimación)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            /* Fondo con degradado azul más notorio */
+            background-color: #f0f5ff;
+            background-image: linear-gradient(180deg, #cadcff 0%, #f5f9ff 100%);
+            min-height: 100vh;
         }
+
+        /* Estilo para la fuente del menú y títulos */
+        .font-exo {
+            font-family: 'Exo 2', sans-serif;
+        }
+        
+        /* Estilos para el menú de navegación */
+        .navbar {
+             backdrop-filter: blur(10px);
+             -webkit-backdrop-filter: blur(10px);
+        }
+
         .result-grid {
             display: grid;
             grid-template-columns: auto 1fr;
             gap: 0.5rem 1.5rem;
             align-items: center;
         }
+
         .result-grid span:nth-child(odd) {
             font-weight: 500;
             color: #4A5568; /* gray-700 */
         }
+
         .result-grid span:nth-child(even) {
             font-weight: 600;
             text-align: right;
             color: #1A202C; /* gray-900 */
         }
+
         .result-grid .net-pay {
             font-size: 1.25rem;
             font-weight: 700;
             color: #2F855A; /* green-700 */
         }
+
         .form-group {
             display: flex;
             flex-direction: column;
         }
+
         .form-grid {
-             display: grid;
-             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-             gap: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
         }
+
         select:disabled {
             background-color: #E2E8F0; /* gray-300 */
             cursor: not-allowed;
         }
+
         hr {
             grid-column: 1 / -1;
             border-color: #CBD5E0; /* gray-400 */
         }
+        
+        /* Nuevos estilos para botones interactivos */
+        .btn {
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            color: white;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            border-bottom: 3px solid transparent; /* Para el efecto 3D */
+            transform: translateY(0);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .btn-blue {
+            background-color: #2563eb; /* Tailwind blue-600 */
+            border-bottom-color: #1d4ed8; /* Tailwind blue-800 */
+        }
+        .btn-blue:hover {
+            background-color: #1d4ed8; /* Tailwind blue-700 */
+        }
+        .btn-gray {
+            background-color: #4b5563; /* Tailwind gray-600 */
+            border-bottom-color: #1f2937; /* Tailwind gray-800 */
+        }
+        .btn-gray:hover {
+            background-color: #374151; /* Tailwind gray-700 */
+        }
+        
+        /* Estilos para pestañas de contrato */
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280; /* gray-500 */
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease-in-out;
+            margin-bottom: -1px; /* Alinea con el borde inferior del contenedor */
+        }
+        .tab-btn.active {
+            color: #2563eb; /* blue-600 */
+            border-bottom-color: #2563eb;
+        }
+        .tab-btn:not(.active):hover {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+
     </style>
 </head>
-<body class="bg-gray-100">
+
+<body>
+
+    <!-- Menú de Navegación -->
+    <nav class="bg-blue-900/80 navbar sticky top-0 z-50 shadow-lg font-exo">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <a href="#" class="flex items-center text-white text-2xl font-bold">
+                     <svg class="w-10 h-10 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    AeroNómina
+                </a>
+
+                <!-- Menú para Escritorio -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="text-gray-300 hover:text-white transition duration-300">Calculadora</a>
+                    <div class="text-yellow-300 text-sm font-semibold">Próximamente: CANAL DE TELEGRAM</div>
+                </div>
+                
+                <!-- Botón de Menú Móvil -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-white focus:outline-none">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Menú Móvil -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#" class="block py-3 px-6 text-gray-300 hover:bg-blue-800 hover:text-white transition duration-300">Calculadora</a>
+            <div class="py-3 px-6 text-yellow-300 text-sm font-semibold">Próximamente: CANAL DE TELEGRAM</div>
+        </div>
+    </nav>
+
 
     <div class="container mx-auto max-w-4xl bg-white p-6 sm:p-8 my-8 rounded-xl shadow-lg">
         <div class="text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-blue-800">CALCULADORA DE NÓMINA</h1>
-            <img src="https://github.com/ebazan23/calculadora-salarial-piloto/blob/main/BZ.PNG?raw=true" alt="Logotipo de la empresa" class="mx-auto my-4 w-32 h-32 rounded-full shadow-md">
+            <img src="https://github.com/ebazan23/calculadora-salarial-piloto/blob/main/BZ.PNG?raw=true" alt=" onerror="this.onerror=null;this.src='https://placehold.co/128x128/eaf2ff/1a202c?text=Logo';" alt="Logotipo de la empresa" class="mx-auto my-4 w-32 h-32 rounded-full shadow-md">
+            <h1 class="text-3xl sm:text-4xl font-bold text-blue-800 font-exo">CALCULADORA DE NÓMINA</h1>
         </div>
 
         <form id="salaryForm">
             <fieldset class="border border-gray-300 rounded-lg p-4 mb-6">
-                <legend class="text-lg font-bold text-blue-700 px-2">Datos para Cálculo</legend>
+                <legend class="text-lg font-bold text-blue-700 px-2 font-exo">Datos para Cálculo</legend>
                 <div class="form-grid mt-4">
-                    <div class="form-group">
-                        <label for="tipoContrato" class="mb-1 font-medium text-gray-700">Contrato:</label>
-                        <select id="tipoContrato" name="tipoContrato" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="contratoB">B</option>
-                            <option value="contratoA">A</option>
-                        </select>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <div class="flex border-b border-gray-300">
+                           <button type="button" id="tabContratoB" class="tab-btn active" data-value="contratoB">Contrato B</button>
+                           <button type="button" id="tabContratoA" class="tab-btn" data-value="contratoA">Contrato A</button>
+                        </div>
+                        <input type="hidden" id="tipoContrato" name="tipoContrato" value="contratoB">
                     </div>
                     <div class="form-group">
                         <label for="anosAntiguedad" class="mb-1 font-medium text-gray-700">Años de Antigüedad:</label>
@@ -86,21 +201,21 @@
                             <option value="787">B787</option>
                         </select>
                     </div>
-                     <div class="form-group">
+                    <div class="form-group">
                         <label for="esAsesor" class="mb-1 font-medium text-gray-700">¿Es Asesor/Instructor?</label>
                         <select id="esAsesor" name="esAsesor" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="no">No</option>
                             <option value="si">Sí</option>
                         </select>
                     </div>
-                     <div class="form-group">
+                    <div class="form-group">
                         <label for="vacaciones" class="mb-1 font-medium text-gray-700">¿Vacaciones?</label>
                         <select id="vacaciones" name="vacaciones" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="no">No</option>
                             <option value="si">Sí (Calcular Prima)</option>
                         </select>
                     </div>
-                     <div class="form-group">
+                    <div class="form-group">
                         <label for="eLearning" class="mb-1 font-medium text-gray-700">E-Learning:</label>
                         <select id="eLearning" name="eLearning" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="no">No</option>
@@ -111,7 +226,7 @@
             </fieldset>
 
             <fieldset class="border border-gray-300 rounded-lg p-4 mb-6">
-                <legend class="text-lg font-bold text-blue-700 px-2">Conceptos de Pago Variables (Mensuales)</legend>
+                <legend class="text-lg font-bold text-blue-700 px-2 font-exo">Conceptos de Pago Variables (Mensuales)</legend>
                 <div class="form-grid mt-4">
                     <div class="form-group">
                         <label for="tesdHoras" class="mb-1 font-medium text-gray-700">TESD (T.E. Servicio Diario):</label>
@@ -129,7 +244,7 @@
                             <input type="number" id="tevdMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
-                     <div class="form-group">
+                    <div class="form-group">
                         <label for="tevmHoras" class="mb-1 font-medium text-gray-700">TEVM (T.E. Vuelo Mensual):</label>
                         <div class="flex items-center gap-2">
                             <input type="number" id="tevmHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -153,7 +268,7 @@
                             <input type="number" id="irreServMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
-                     <div class="form-group">
+                    <div class="form-group">
                         <label for="irreVloHoras" class="mb-1 font-medium text-gray-700">IRRE. VLO.:</label>
                         <div class="flex items-center gap-2">
                             <input type="number" id="irreVloHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -169,7 +284,7 @@
                             <input type="number" id="redDesMinutos" value="0" placeholder="MM" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
-                     <div class="form-group">
+                    <div class="form-group">
                         <label for="teReservaHoras" class="mb-1 font-medium text-gray-700">TE Reserva:</label>
                         <div class="flex items-center gap-2">
                             <input type="number" id="teReservaHoras" value="0" placeholder="HH" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -185,8 +300,8 @@
             </fieldset>
 
             <fieldset class="border border-gray-300 rounded-lg p-4 mb-6">
-                <legend class="text-lg font-bold text-blue-700 px-2">Deducciones (Catorcenal)</legend>
-                 <div class="form-grid mt-4">
+                <legend class="text-lg font-bold text-blue-700 px-2 font-exo">Deducciones (Catorcenal)</legend>
+                <div class="form-grid mt-4">
                     <div class="form-group">
                         <label for="aspenAdicional" class="mb-1 font-medium text-gray-700">ASPEN Adicional:</label>
                         <input type="number" id="aspenAdicional" name="aspenAdicional" value="0" placeholder="$" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -195,16 +310,16 @@
                         <label for="ajusteAspa" class="mb-1 font-medium text-gray-700">Ajuste ASPA:</label>
                         <input type="number" id="ajusteAspa" name="ajusteAspa" value="0" placeholder="$" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
-                     <div class="form-group">
+                    <div class="form-group">
                         <label for="otrasDeducciones" class="mb-1 font-medium text-gray-700">Otras Deducciones:</label>
                         <input type="number" id="otrasDeducciones" name="otrasDeducciones" value="0" placeholder="$" class="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
                 </div>
             </fieldset>
 
-            <div class="flex justify-center gap-4 mt-4">
-                <button type="button" id="calculateBtn" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">Calcular Salario</button>
-                <button type="button" id="resetBtn" class="px-8 py-3 bg-gray-600 text-white font-bold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all">Limpiar</button>
+            <div class="flex justify-center gap-4 mt-8">
+                <button type="button" id="calculateBtn" class="btn btn-blue">Calcular Salario</button>
+                <button type="button" id="resetBtn" class="btn btn-gray">Limpiar</button>
             </div>
         </form>
 
@@ -213,309 +328,231 @@
     </div>
 
     <script>
-        const CCT_DATA = {
-            salarios: {
-                contratoA: {
-                    copiloto: {'737':[67925.51,69311.74,70726.31,72169.70,73642.55,75115.40,75115.40,75115.40,75115.40,76617.70,78150.06,79713.06,81307.32,82933.47,84592.14,86283.98,88009.66,89769.85,91565.25],'787':[79396.35,81016.68,82670.08,84357.20,86078.80,87800.38,87800.38,87800.38,87800.38,89556.39,91347.52,93174.47,95037.96,96938.71,98877.49,100855.04,102872.14,104929.58,107028.17]},
-                    comandante: {'737':[111353.32,113625.83,115944.77,118310.98,120725.49,123140.00,123140.00,123140.00,123140.00,125602.80,128114.86,130677.15,133290.70,135956.51,138675.64,141449.15,144278.14,147163.70,150106.97],'787':[130157.95,132814.23,135524.78,138290.53,141112.82,143935.08,143935.08,143935.08,143935.08,146813.78,149750.06,152745.06,155799.96,158915.96,162094.28,165336.16,168642.89,172015.74,175456.06]}
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Lógica del menú móvil ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // --- Lógica para Pestañas de Contrato ---
+            const tipoContratoInput = document.getElementById('tipoContrato');
+            const tabContratoA = document.getElementById('tabContratoA');
+            const tabContratoB = document.getElementById('tabContratoB');
+
+            function selectContractTab(tabElement) {
+                const value = tabElement.dataset.value;
+                tipoContratoInput.value = value;
+                
+                // Actualizar valor en el select original (para compatibilidad)
+                const tipoContratoSelect = document.getElementById('tipoContrato');
+                if (tipoContratoSelect) {
+                    tipoContratoSelect.value = value;
+                }
+
+                tabContratoA.classList.remove('active');
+                tabContratoB.classList.remove('active');
+                tabElement.classList.add('active');
+            }
+
+            tabContratoA.addEventListener('click', () => selectContractTab(tabContratoA));
+            tabContratoB.addEventListener('click', () => selectContractTab(tabContratoB));
+
+            // --- Lógica de la calculadora (existente) ---
+            const CCT_DATA = {
+                salarios: {
+                    contratoA: {
+                        copiloto: {'737':[67925.51,69311.74,70726.31,72169.70,73642.55,75115.40,75115.40,75115.40,75115.40,76617.70,78150.06,79713.06,81307.32,82933.47,84592.14,86283.98,88009.66,89769.85,91565.25],'787':[79396.35,81016.68,82670.08,84357.20,86078.80,87800.38,87800.38,87800.38,87800.38,89556.39,91347.52,93174.47,95037.96,96938.71,98877.49,100855.04,102872.14,104929.58,107028.17]},
+                        comandante: {'737':[111353.32,113625.83,115944.77,118310.98,120725.49,123140.00,123140.00,123140.00,123140.00,125602.80,128114.86,130677.15,133290.70,135956.51,138675.64,141449.15,144278.14,147163.70,150106.97],'787':[130157.95,132814.23,135524.78,138290.53,141112.82,143935.08,143935.08,143935.08,143935.08,146813.78,149750.06,152745.06,155799.96,158915.96,162094.28,165336.16,168642.89,172015.74,175456.06]}
+                    },
+                    contratoB: {
+                        copiloto: {'737':[67925.51,69311.74,70726.31,72169.70,73642.55,75115.40,75115.40,75115.40,75115.40,76617.70,78150.06,79713.06,81307.32,82933.47,84592.14,86283.98,88009.66,89769.85,91565.25],'787':[79396.35,81016.68,82670.08,84357.20,86078.80,87800.38,87800.38,87800.38,87800.38,89556.39,91347.52,93174.47,95037.96,96938.71,98877.49,100855.04,102872.14,104929.58,107028.17]},
+                        comandante: {'737':[111353.32,113625.83,115944.77,118310.98,120725.49,123140.00,123140.00,123140.00,123140.00,125602.80,128114.86,130677.15,133290.70,135956.51,138675.64,141449.15,144278.14,147163.70,150106.97],'787':[130157.95,132814.23,135524.78,138290.53,141112.82,143935.08,143935.08,143935.08,143935.08,146813.78,149750.06,152745.06,155799.96,158915.96,162094.28,165336.16,168642.89,172015.74,175456.06]}
+                    }
                 },
-                contratoB: {
-                    copiloto: {'737':[67925.51,69311.74,70726.31,72169.70,73642.55,75115.40,75115.40,75115.40,75115.40,76617.70,78150.06,79713.06,81307.32,82933.47,84592.14,86283.98,88009.66,89769.85,91565.25],'787':[79396.35,81016.68,82670.08,84357.20,86078.80,87800.38,87800.38,87800.38,87800.38,89556.39,91347.52,93174.47,95037.96,96938.71,98877.49,100855.04,102872.14,104929.58,107028.17]},
-                    comandante: {'737':[111353.32,113625.83,115944.77,118310.98,120725.49,123140.00,123140.00,123140.00,123140.00,125602.80,128114.86,130677.15,133290.70,135956.51,138675.64,141449.15,144278.14,147163.70,150106.97],'787':[130157.95,132814.23,135524.78,138290.53,141112.82,143935.08,143935.08,143935.08,143935.08,146813.78,149750.06,152745.06,155799.96,158915.96,162094.28,165336.16,168642.89,172015.74,175456.06]}
+                porcentajesAportaciones: {
+                    contratoA: { sindical: 0.15, fcaa: 0.08, garantia: 0.57, tienda: 7542.21 },
+                    contratoB: { sindical: 0.06, fcaa: 0.05, reconocimiento: 0.06, equidad: 0.36 }
+                },
+                bonosFijos: {
+                    contratoA: { reconocimiento: { copiloto: 3137.55, comandante: 5020.08 } }
+                },
+                costoHoraExtraVuelo: {
+                    contratoA: { '737': 847.79, '787': 1017.35 },
+                    contratoB: { '737': 593.45, '787': 712.15 }
+                },
+                despensaCatorcenal: 8476.52
+            };
+
+            function parseTime(horasId, minutosId) {
+                const horas = parseFloat(document.getElementById(horasId).value) || 0;
+                const minutos = parseFloat(document.getElementById(minutosId).value) || 0;
+                return horas + (minutos / 60);
+            }
+
+            function getSalarioTabular(tc, pos, eq, yrs) {
+                const tabulador = (CCT_DATA.salarios[tc] && CCT_DATA.salarios[tc][pos]) ? CCT_DATA.salarios[tc][pos][eq] : undefined;
+                if (!tabulador) return 0;
+                const index = Math.max(0, yrs - 1);
+                const finalIndex = Math.min(index, tabulador.length - 1);
+                return tabulador[finalIndex] || 0;
+            }
+
+            function getSalarioMaximo(tc, eq) {
+                const tabulador = (CCT_DATA.salarios[tc] && CCT_DATA.salarios[tc].comandante) ? CCT_DATA.salarios[tc].comandante[eq] : undefined;
+                if (!tabulador || tabulador.length === 0) return 0;
+                return Math.max(...tabulador);
+            }
+
+            function getCostoHoraExtraVuelo(tc, eq) {
+                const costo = CCT_DATA.costoHoraExtraVuelo[tc] ? CCT_DATA.costoHoraExtraVuelo[tc][eq] : undefined;
+                return costo || 0;
+            }
+
+            function getDiasVacaciones(yrs) {
+                if (yrs <= 0) return 0;
+                if (yrs === 1) return 30;
+                return 30 + (yrs - 1);
+            }
+
+            const currencyFormatter = new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN'
+            });
+
+            const posicionSelect = document.getElementById('posicion');
+            const asesorSelect = document.getElementById('esAsesor');
+
+            posicionSelect.addEventListener('change', () => {
+                if (posicionSelect.value === 'copiloto') {
+                    asesorSelect.value = 'no';
+                    asesorSelect.disabled = true;
+                } else {
+                    asesorSelect.disabled = false;
                 }
-            },
-            porcentajesAportaciones: { 
-                contratoA: { sindical: 0.15, fcaa: 0.08, garantia: 0.57, tienda: 7542.21 },
-                contratoB: { sindical: 0.06, fcaa: 0.05, reconocimiento: 0.06, equidad: 0.36 }
-            },
-            bonosFijos: {
-                contratoA: {
-                    reconocimiento: { copiloto: 3137.55, comandante: 5020.08 }
+            });
+
+            document.getElementById('calculateBtn').addEventListener('click', calculateSalary);
+            document.getElementById('resetBtn').addEventListener('click', resetForm);
+
+            function calculateSalary() {
+                const tipoContrato = document.getElementById('tipoContrato').value;
+                const anosAntiguedad = parseInt(document.getElementById('anosAntiguedad').value);
+                const posicion = document.getElementById('posicion').value;
+                const equipo = document.getElementById('equipo').value;
+                const esAsesor = posicion === 'comandante' && document.getElementById('esAsesor').value === 'si';
+                const isVacaciones = document.getElementById('vacaciones').value === 'si';
+
+                if (isNaN(anosAntiguedad) || anosAntiguedad <= 0) {
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = `<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg" role="alert"><p class="font-bold">Error de Validación</p><p>Por favor, ingresa un número válido y mayor a 0 para los años de antigüedad.</p></div>`;
+                    window.scrollTo(0, document.body.scrollHeight);
+                    return;
                 }
-            },
-            costoHoraExtraVuelo: {
-                contratoA: { '737': 847.79, '787': 1017.35 },
-                contratoB: { '737': 593.45, '787': 712.15 }
-            },
-            despensaCatorcenal: 8476.52
-        };
 
-        // --- Helper functions ---
-        function parseTime(horasId, minutosId) {
-            const horas = parseFloat(document.getElementById(horasId).value) || 0;
-            const minutos = parseFloat(document.getElementById(minutosId).value) || 0;
-            return horas + (minutos / 60);
-        }
+                const tesd = parseTime('tesdHoras', 'tesdMinutos');
+                const tevd = parseTime('tevdHoras', 'tevdMinutos');
+                const tevm = parseTime('tevmHoras', 'tevmMinutos');
+                const jornadaNocturna = parseTime('jornadaNocturnaHoras', 'jornadaNocturnaMinutos');
+                const isELearning = document.getElementById('eLearning').value === 'si';
+                const irreServ = parseTime('irreServHoras', 'irreServMinutos');
+                const irreVlo = parseTime('irreVloHoras', 'irreVloMinutos');
+                const redDes = parseTime('redDesHoras', 'redDesMinutos');
+                const teReserva = parseTime('teReservaHoras', 'teReservaMinutos');
+                const fo7Dia = parseFloat(document.getElementById('fo7Dia').value) || 0;
+                const isrPorcentaje = tipoContrato === 'contratoB' ? 34 : 35;
+                const imssEstimado = 1079.86;
+                const aspenAdicional = parseFloat(document.getElementById('aspenAdicional').value) || 0;
+                const ajusteAspa = parseFloat(document.getElementById('ajusteAspa').value) || 0;
+                const otrasDeducciones = parseFloat(document.getElementById('otrasDeducciones').value) || 0;
+                const salarioTabularMensual = getSalarioTabular(tipoContrato, posicion, equipo, anosAntiguedad);
+                const salarioDiarioTabular = salarioTabularMensual / 30;
+                const p = CCT_DATA.porcentajesAportaciones[tipoContrato];
+                const fcaaMensual = salarioTabularMensual * p.fcaa;
+                const clausulaSindicalMensual = salarioTabularMensual * p.sindical;
+                const despensaCatorcenal = CCT_DATA.despensaCatorcenal;
+                let salarioOrdinarioDiario, bonoRecMensual, besMensual;
 
-        function getSalarioTabular(tc, pos, eq, yrs) {
-            const tabulador = CCT_DATA.salarios[tc]?.[pos]?.[eq];
-            if (!tabulador) return 0;
-            const index = Math.max(0, yrs - 1);
-            const finalIndex = Math.min(index, tabulador.length - 1);
-            return tabulador[finalIndex] || 0;
-        }
+                if (tipoContrato === 'contratoB') {
+                    bonoRecMensual = salarioTabularMensual * p.reconocimiento;
+                    besMensual = salarioTabularMensual * p.equidad;
+                    const salarioOrdinarioMensual = salarioTabularMensual + bonoRecMensual + besMensual + clausulaSindicalMensual + fcaaMensual;
+                    salarioOrdinarioDiario = salarioOrdinarioMensual / 30;
+                } else {
+                    bonoRecMensual = CCT_DATA.bonosFijos.contratoA.reconocimiento[posicion] || 0;
+                    besMensual = 0;
+                    const salarioOrdinarioMensual = salarioTabularMensual * (1 + p.garantia) + clausulaSindicalMensual + fcaaMensual + p.tienda;
+                    salarioOrdinarioDiario = salarioOrdinarioMensual / 30;
+                }
 
-        function getSalarioMaximo(tc, eq) {
-             const tabulador = CCT_DATA.salarios[tc]?.comandante?.[eq];
-             if (!tabulador || tabulador.length === 0) return 0;
-             return Math.max(...tabulador);
-        }
-        
-        function getCostoHoraExtraVuelo(tc, eq) { return CCT_DATA.costoHoraExtraVuelo[tc]?.[eq] || 0; }
-        
-        function getDiasVacaciones(yrs) {
-            if (yrs <= 0) return 0;
-            if (yrs === 1) return 30;
-            return 30 + (yrs - 1);
-        }
+                const sueldoCatorcenal = salarioDiarioTabular * 14;
+                const bonoRecCatorcenal = (bonoRecMensual / 30) * 14;
+                const besCatorcenal = (besMensual / 30) * 14;
+                const fcaaCatorcenal = (fcaaMensual / 30) * 14;
+                const clausulaSindicalCatorcenal = (clausulaSindicalMensual / 30) * 14;
+                let compAsesorCatorcenal = 0;
+                if (esAsesor) {
+                    const salarioMaximoCapitan = getSalarioMaximo(tipoContrato, equipo);
+                    const baseAsesor = salarioMaximoCapitan * 1.05;
+                    compAsesorCatorcenal = (baseAsesor * 0.35 / 30) * 14;
+                }
+                const percepcionesFijasSinDespensa = sueldoCatorcenal + besCatorcenal + bonoRecCatorcenal + fcaaCatorcenal + clausulaSindicalCatorcenal + compAsesorCatorcenal;
+                const costoHoraExtraVuelo = getCostoHoraExtraVuelo(tipoContrato, equipo);
+                let pagoTESD = tesd * (salarioTabularMensual * 0.01);
+                let pagoTEVD = tevd * (salarioTabularMensual * (tipoContrato === 'contratoB' ? 0.0125 : 0.02));
+                let pagoTEVM = tevm * (salarioTabularMensual * (tipoContrato === 'contratoB' ? 0.04 : 0.03));
+                let pagoJornadaNocturna = jornadaNocturna * (salarioTabularMensual * 0.00645);
+                let pagoELearning = 0;
+                if (isELearning) {
+                    pagoELearning = 25 * (salarioTabularMensual * 0.0055);
+                }
+                let pagoIrreServ = irreServ * (salarioTabularMensual * 0.02);
+                let pagoIrreVlo = irreVlo * costoHoraExtraVuelo * 2;
+                let pagoRedDes = redDes * (salarioTabularMensual * 0.01);
+                let pagoFo7Dia = fo7Dia * salarioDiarioTabular * 3;
+                let pagoTeReserva = teReserva * (salarioTabularMensual * 0.04);
+                let primaVacacionalAnual = 0;
+                if (isVacaciones) {
+                    const diasVacaciones = getDiasVacaciones(anosAntiguedad);
+                    const salarioVacaciones = salarioOrdinarioDiario * diasVacaciones;
+                    primaVacacionalAnual = salarioVacaciones * 0.30;
+                }
+                if (esAsesor) {
+                    pagoTESD *= 1.35; pagoTEVD *= 1.35; pagoTEVM *= 1.35; pagoJornadaNocturna *= 1.35; pagoELearning *= 1.35; pagoIrreServ *= 1.35; pagoIrreVlo *= 1.35; pagoRedDes *= 1.35; pagoFo7Dia *= 1.35; pagoTeReserva *= 1.35; primaVacacionalAnual *= 1.35;
+                }
+                const totalPagosVariables = pagoTESD + pagoTEVD + pagoTEVM + pagoJornadaNocturna + pagoELearning + pagoIrreServ + pagoIrreVlo + pagoRedDes + pagoFo7Dia + pagoTeReserva;
+                const catorcenaAltaBruta = percepcionesFijasSinDespensa + totalPagosVariables + primaVacacionalAnual;
+                const isrCatorcenaAlta = catorcenaAltaBruta * (isrPorcentaje / 100);
+                const deduccionesCatorcenales = imssEstimado + aspenAdicional + ajusteAspa + otrasDeducciones;
+                const catorcenaAltaNeta = catorcenaAltaBruta - isrCatorcenaAlta - deduccionesCatorcenales;
+                const catorcenaBajaBruta = percepcionesFijasSinDespensa + despensaCatorcenal;
+                const isrCatorcenaBaja = catorcenaBajaBruta * (isrPorcentaje / 100);
+                const catorcenaBajaNeta = catorcenaBajaBruta - isrCatorcenaBaja - deduccionesCatorcenales;
+                let desgloseVariablesHTML = '';
+                const pagosVariables = { "T.E. Servicio Diario (TESD)": pagoTESD, "T.E. Vuelo Diario (TEVD)": pagoTEVD, "T.E. Vuelo Mensual (TEVM)": pagoTEVM, "Jornada Nocturna": pagoJornadaNocturna, "E-Learning": pagoELearning, "IRRE. SERV.": pagoIrreServ, "IRRE. VLO.": pagoIrreVlo, "RED. DES.": pagoRedDes, "FO/7° Día": pagoFo7Dia, "TE Reserva": pagoTeReserva };
+                if (Object.values(pagosVariables).some(v => v > 0)) {
+                    desgloseVariablesHTML += `<hr><h4 class="text-md font-semibold text-blue-700 col-span-2 mt-2 mb-1">Desglose de Pagos Variables</h4>`;
+                    for (const [key, value] of Object.entries(pagosVariables)) { if (value > 0) { desgloseVariablesHTML += `<span>${key}:</span> <span>${currencyFormatter.format(value)}</span>`; } }
+                }
+                const percepcionesFijasAltaHTML = `<h4 class="text-md font-semibold text-blue-700 col-span-2 mb-1">Desglose de Percepciones Fijas</h4><span>Sueldo (14 días):</span> <span>${currencyFormatter.format(sueldoCatorcenal)}</span> ${esAsesor ? `<span>Comp. Asesor/Instructor:</span> <span>${currencyFormatter.format(compAsesorCatorcenal)}</span>` : ''} <span>Fondo Caja Contractual (FCAA):</span> <span>${currencyFormatter.format(fcaaCatorcenal)}</span> <span>Cláusula Sindical:</span> <span>${currencyFormatter.format(clausulaSindicalCatorcenal)}</span> <span>Bono de Reconocimiento:</span> <span>${currencyFormatter.format(bonoRecCatorcenal)}</span> ${tipoContrato === 'contratoB' ? `<span>Bono de Equidad Salarial:</span> <span>${currencyFormatter.format(besCatorcenal)}</span>` : ''}`;
+                const percepcionesFijasBajaHTML = percepcionesFijasAltaHTML;
+                let aguinaldoAnual = salarioDiarioTabular * 20;
+                if (esAsesor) { aguinaldoAnual *= 1.35; }
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = `<h2 class="text-2xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-6 font-exo">Resultados de la Estimación</h2><div class="result-section bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6"><h3 class="text-xl font-bold text-gray-800 mb-4 font-exo">Datos del Piloto</h3><div class="result-grid"><span>Contrato Seleccionado:</span> <span>${tipoContrato.replace('contrato', ' ')}</span><span>Años de Antigüedad:</span> <span>${anosAntiguedad}</span><span>Salario Tabular Mensual:</span> <span>${currencyFormatter.format(salarioTabularMensual)}</span><span>Salario Diario Tabular:</span> <span>${currencyFormatter.format(salarioDiarioTabular)}</span><span>Salario Ordinario Diario:</span> <span>${currencyFormatter.format(salarioOrdinarioDiario)}</span></div></div><div class="result-section bg-blue-50 border border-blue-200 p-6 rounded-lg mb-6"><h3 class="text-xl font-bold text-blue-800 mb-4 font-exo">Estimación Catorcena con Extras ("Alta")</h3><div class="result-grid">${percepcionesFijasAltaHTML} ${desgloseVariablesHTML} ${isVacaciones ? `<hr><span>Prima Vacacional (Anual):</span> <span>${currencyFormatter.format(primaVacacionalAnual)}</span>` : ''}<hr><hr><span><strong>Total Bruto Estimado:</strong></span> <span>${currencyFormatter.format(catorcenaAltaBruta)}</span><span>ISR Estimado (${isrPorcentaje}%):</span> <span class="text-red-600">-${currencyFormatter.format(isrCatorcenaAlta)}</span><span>Deducción IMSS:</span> <span class="text-red-600">-${currencyFormatter.format(imssEstimado)}</span><span>ASPEN Adicional:</span> <span class="text-red-600">-${currencyFormatter.format(aspenAdicional)}</span><span>Ajuste ASPA:</span> <span class="text-red-600">-${currencyFormatter.format(ajusteAspa)}</span><span>Otras Deducciones:</span> <span class="text-red-600">-${currencyFormatter.format(otrasDeducciones)}</span><hr><hr><span><strong>Neto a Recibir Estimado:</strong></span> <span class="net-pay">${currencyFormatter.format(catorcenaAltaNeta)}</span></div></div><div class="result-section bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6"><h3 class="text-xl font-bold text-gray-800 mb-4 font-exo">Estimación Catorcena Base ("Baja")</h3><div class="result-grid">${percepcionesFijasBajaHTML}<hr><span>Despensa:</span> <span>${currencyFormatter.format(despensaCatorcenal)}</span><hr><hr><span><strong>Total Bruto Estimado:</strong></span> <span>${currencyFormatter.format(catorcenaBajaBruta)}</span><span>ISR Estimado (${isrPorcentaje}%):</span> <span class="text-red-600">-${currencyFormatter.format(isrCatorcenaBaja)}</span><span>Deducción IMSS:</span> <span class="text-red-600">-${currencyFormatter.format(imssEstimado)}</span><span>ASPEN Adicional:</span> <span class="text-red-600">-${currencyFormatter.format(aspenAdicional)}</span><span>Ajuste ASPA:</span> <span class="text-red-600">-${currencyFormatter.format(ajusteAspa)}</span><span>Otras Deducciones:</span> <span class="text-red-600">-${currencyFormatter.format(otrasDeducciones)}</span><hr><hr><span><strong>Neto a Recibir Estimado:</strong></span> <strong class="net-pay">${currencyFormatter.format(catorcenaBajaNeta)}</strong></div></div><div class="info-section bg-teal-50 border-l-4 border-teal-500 p-4 rounded-r-lg"><h3 class="text-lg font-bold text-teal-800 font-exo">Aportaciones (Informativo Mensual)</h3><div class="result-grid mt-2"><span>Fondo de Ahorro (FCAA):</span> <span>${currencyFormatter.format(fcaaMensual)}</span><span>Cláusula Sindical:</span> <span>${currencyFormatter.format(clausulaSindicalMensual)}</span></div></div><div class="info-section bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mt-6"><h3 class="text-lg font-bold text-yellow-800 font-exo">Prestaciones Anuales (Informativo)</h3><div class="result-grid mt-2"><span>Aguinaldo (20 días Estimado):</span> <span>${currencyFormatter.format(aguinaldoAnual)}</span></div></div>`;
+                resultsDiv.scrollIntoView({ behavior: 'smooth' });
+            }
 
-        const currencyFormatter = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
-        
-        const posicionSelect = document.getElementById('posicion');
-        const asesorSelect = document.getElementById('esAsesor');
-
-        posicionSelect.addEventListener('change', () => {
-            if(posicionSelect.value === 'copiloto') {
-                asesorSelect.value = 'no';
-                asesorSelect.disabled = true;
-            } else {
+            function resetForm() {
+                document.getElementById('salaryForm').reset();
+                document.getElementById('results').innerHTML = '';
+                selectContractTab(document.getElementById('tabContratoB')); // Restablecer a Contrato B por defecto
                 asesorSelect.disabled = false;
             }
         });
-        
-        document.getElementById('calculateBtn').addEventListener('click', calculateSalary);
-        document.getElementById('resetBtn').addEventListener('click', resetForm);
-
-        function calculateSalary() {
-            // --- 1. READ & VALIDATE FORM DATA ---
-            const tipoContrato = document.getElementById('tipoContrato').value;
-            const anosAntiguedad = parseInt(document.getElementById('anosAntiguedad').value);
-            const posicion = document.getElementById('posicion').value;
-            const equipo = document.getElementById('equipo').value;
-            const esAsesor = posicion === 'comandante' && document.getElementById('esAsesor').value === 'si';
-            const isVacaciones = document.getElementById('vacaciones').value === 'si';
-
-            if (isNaN(anosAntiguedad) || anosAntiguedad <= 0) {
-                alert("Por favor, ingresa un número válido y mayor a 0 para los años de antigüedad.");
-                return;
-            }
-
-            const tesd = parseTime('tesdHoras', 'tesdMinutos');
-            const tevd = parseTime('tevdHoras', 'tevdMinutos');
-            const tevm = parseTime('tevmHoras', 'tevmMinutos');
-            const jornadaNocturna = parseTime('jornadaNocturnaHoras', 'jornadaNocturnaMinutos');
-            const isELearning = document.getElementById('eLearning').value === 'si';
-            const irreServ = parseTime('irreServHoras', 'irreServMinutos');
-            const irreVlo = parseTime('irreVloHoras', 'irreVloMinutos');
-            const redDes = parseTime('redDesHoras', 'redDesMinutos');
-            const teReserva = parseTime('teReservaHoras', 'teReservaMinutos');
-            const fo7Dia = parseFloat(document.getElementById('fo7Dia').value) || 0;
-            
-            const isrPorcentaje = tipoContrato === 'contratoB' ? 34 : 35;
-            const imssEstimado = 1079.86; 
-            const aspenAdicional = parseFloat(document.getElementById('aspenAdicional').value) || 0;
-            const ajusteAspa = parseFloat(document.getElementById('ajusteAspa').value) || 0;
-            const otrasDeducciones = parseFloat(document.getElementById('otrasDeducciones').value) || 0;
-
-            // --- 2. CALCULATE BASE EARNINGS ---
-            const salarioTabularMensual = getSalarioTabular(tipoContrato, posicion, equipo, anosAntiguedad);
-            const salarioDiarioTabular = salarioTabularMensual / 30;
-            
-            const p = CCT_DATA.porcentajesAportaciones[tipoContrato];
-            const fcaaMensual = salarioTabularMensual * p.fcaa;
-            const clausulaSindicalMensual = salarioTabularMensual * p.sindical;
-            const despensaCatorcenal = CCT_DATA.despensaCatorcenal;
-            
-            let salarioOrdinarioDiario, bonoRecMensual, besMensual;
-
-            if (tipoContrato === 'contratoB') {
-                bonoRecMensual = salarioTabularMensual * p.reconocimiento;
-                besMensual = salarioTabularMensual * p.equidad;
-                const salarioOrdinarioMensual = salarioTabularMensual + bonoRecMensual + besMensual + clausulaSindicalMensual + fcaaMensual;
-                salarioOrdinarioDiario = salarioOrdinarioMensual / 30;
-            } else { // Contrato A
-                bonoRecMensual = CCT_DATA.bonosFijos.contratoA.reconocimiento[posicion] || 0;
-                besMensual = 0; // Contrato A does not have this bonus
-                const salarioOrdinarioMensual = salarioTabularMensual * (1 + p.garantia) + clausulaSindicalMensual + fcaaMensual + p.tienda;
-                salarioOrdinarioDiario = salarioOrdinarioMensual / 30;
-            }
-            
-            const sueldoCatorcenal = salarioDiarioTabular * 14;
-            const bonoRecCatorcenal = (bonoRecMensual / 30) * 14;
-            const besCatorcenal = (besMensual / 30) * 14;
-            const fcaaCatorcenal = (fcaaMensual / 30) * 14;
-            const clausulaSindicalCatorcenal = (clausulaSindicalMensual / 30) * 14;
-
-            let compAsesorCatorcenal = 0;
-            if (esAsesor) {
-                const salarioMaximoCapitan = getSalarioMaximo(tipoContrato, equipo);
-                const baseAsesor = salarioMaximoCapitan * 1.05;
-                compAsesorCatorcenal = (baseAsesor * 0.35 / 30) * 14;
-            }
-
-            const percepcionesFijasSinDespensa = sueldoCatorcenal + besCatorcenal + bonoRecCatorcenal + fcaaCatorcenal + clausulaSindicalCatorcenal + compAsesorCatorcenal;
-
-            // --- 3. CALCULATE VARIABLE & EXTRA PAYMENTS ---
-            const costoHoraExtraVuelo = getCostoHoraExtraVuelo(tipoContrato, equipo);
-            let pagoTESD = tesd * (salarioTabularMensual * 0.01);
-            let pagoTEVD = tevd * (salarioTabularMensual * (tipoContrato === 'contratoB' ? 0.0125 : 0.02));
-            let pagoTEVM = tevm * (salarioTabularMensual * (tipoContrato === 'contratoB' ? 0.04 : 0.03));
-            let pagoJornadaNocturna = jornadaNocturna * (salarioTabularMensual * 0.00645);
-            let pagoELearning = 0;
-            if (isELearning) {
-                pagoELearning = 25 * (salarioTabularMensual * 0.0055);
-            }
-            let pagoIrreServ = irreServ * (salarioTabularMensual * 0.02);
-            let pagoIrreVlo = irreVlo * costoHoraExtraVuelo * 2;
-            let pagoRedDes = redDes * (salarioTabularMensual * 0.01);
-            let pagoFo7Dia = fo7Dia * salarioDiarioTabular * 3;
-            let pagoTeReserva = teReserva * (salarioTabularMensual * 0.04);
-
-            let primaVacacionalAnual = 0;
-            if (isVacaciones) {
-                const diasVacaciones = getDiasVacaciones(anosAntiguedad);
-                const salarioVacaciones = salarioOrdinarioDiario * diasVacaciones;
-                primaVacacionalAnual = salarioVacaciones * 0.30;
-            }
-
-            // Apply 35% bonus for advisors
-            if (esAsesor) {
-                pagoTESD *= 1.35;
-                pagoTEVD *= 1.35;
-                pagoTEVM *= 1.35;
-                pagoJornadaNocturna *= 1.35;
-                pagoELearning *= 1.35;
-                pagoIrreServ *= 1.35;
-                pagoIrreVlo *= 1.35;
-                pagoRedDes *= 1.35;
-                pagoFo7Dia *= 1.35;
-                pagoTeReserva *= 1.35;
-                primaVacacionalAnual *= 1.35;
-            }
-
-            const totalPagosVariables = pagoTESD + pagoTEVD + pagoTEVM + pagoJornadaNocturna + pagoELearning + pagoIrreServ + pagoIrreVlo + pagoRedDes + pagoFo7Dia + pagoTeReserva;
-            
-            // --- 4. CALCULATE BI-WEEKLY PAYCHECKS ---
-            const catorcenaAltaBruta = percepcionesFijasSinDespensa + totalPagosVariables + primaVacacionalAnual;
-            const isrCatorcenaAlta = catorcenaAltaBruta * (isrPorcentaje / 100);
-            const deduccionesCatorcenales = imssEstimado + aspenAdicional + ajusteAspa + otrasDeducciones;
-            const catorcenaAltaNeta = catorcenaAltaBruta - isrCatorcenaAlta - deduccionesCatorcenales;
-
-            const catorcenaBajaBruta = percepcionesFijasSinDespensa + despensaCatorcenal;
-            const isrCatorcenaBaja = catorcenaBajaBruta * (isrPorcentaje / 100);
-            const catorcenaBajaNeta = catorcenaBajaBruta - isrCatorcenaBaja - deduccionesCatorcenales;
-
-            // --- 5. GENERATE DETAILED HTML FOR RESULTS ---
-            let desgloseVariablesHTML = '';
-            const pagosVariables = {
-                "T.E. Servicio Diario (TESD)": pagoTESD,
-                "T.E. Vuelo Diario (TEVD)": pagoTEVD,
-                "T.E. Vuelo Mensual (TEVM)": pagoTEVM,
-                "Jornada Nocturna": pagoJornadaNocturna,
-                "E-Learning": pagoELearning,
-                "IRRE. SERV.": pagoIrreServ,
-                "IRRE. VLO.": pagoIrreVlo,
-                "RED. DES.": pagoRedDes,
-                "FO/7° Día": pagoFo7Dia,
-                "TE Reserva": pagoTeReserva
-            };
-
-            let hasVariables = Object.values(pagosVariables).some(v => v > 0);
-
-            if (hasVariables) {
-                desgloseVariablesHTML += `<hr><h4 class="text-md font-semibold text-blue-700 col-span-2 mt-2 mb-1">Desglose de Pagos Variables</h4>`;
-                for (const [key, value] of Object.entries(pagosVariables)) {
-                    if (value > 0) {
-                        desgloseVariablesHTML += `<span>${key}:</span> <span>${currencyFormatter.format(value)}</span>`;
-                    }
-                }
-            }
-            
-            const percepcionesFijasAltaHTML = `<h4 class="text-md font-semibold text-blue-700 col-span-2 mb-1">Desglose de Percepciones Fijas</h4>
-                                               <span>Sueldo (14 días):</span> <span>${currencyFormatter.format(sueldoCatorcenal)}</span>
-                                               ${esAsesor ? `<span>Comp. Asesor/Instructor:</span> <span>${currencyFormatter.format(compAsesorCatorcenal)}</span>` : ''}
-                                               <span>Fondo Caja Contractual (FCAA):</span> <span>${currencyFormatter.format(fcaaCatorcenal)}</span>
-                                               <span>Cláusula Sindical:</span> <span>${currencyFormatter.format(clausulaSindicalCatorcenal)}</span>
-                                               <span>Bono de Reconocimiento:</span> <span>${currencyFormatter.format(bonoRecCatorcenal)}</span>
-                                               ${tipoContrato === 'contratoB' ? `<span>Bono de Equidad Salarial:</span> <span>${currencyFormatter.format(besCatorcenal)}</span>` : ''}`;
-
-            const percepcionesFijasBajaHTML = percepcionesFijasAltaHTML + `<span>Despensa:</span> <span>${currencyFormatter.format(despensaCatorcenal)}</span>`;
-
-            let aguinaldoAnual = salarioDiarioTabular * 20;
-            if (esAsesor) {
-                aguinaldoAnual *= 1.35;
-            }
-
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `
-                <h2 class="text-2xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-6">Resultados de la Estimación</h2>
-                 <div class="result-section bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-bold text-gray-700 mb-4">Datos del Piloto</h3>
-                     <div class="result-grid">
-                        <span>Contrato Seleccionado:</span> <span>${document.getElementById('tipoContrato').options[document.getElementById('tipoContrato').selectedIndex].text}</span>
-                        <span>Años de Antigüedad:</span> <span>${anosAntiguedad}</span>
-                        <span>Salario Tabular Mensual:</span> <span>${currencyFormatter.format(salarioTabularMensual)}</span>
-                        <span>Salario Diario Tabular:</span> <span>${currencyFormatter.format(salarioDiarioTabular)}</span>
-                        <span>Salario Ordinario Diario:</span> <span>${currencyFormatter.format(salarioOrdinarioDiario)}</span>
-                    </div>
-                </div>
-
-                <div class="result-section bg-blue-50 border border-blue-200 p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-bold text-blue-700 mb-4">Estimación Catorcena con Extras ("Alta")</h3>
-                    <div class="result-grid">
-                        ${percepcionesFijasAltaHTML}
-                        ${desgloseVariablesHTML}
-                        ${isVacaciones ? `<hr><span>Prima Vacacional (Anual):</span> <span>${currencyFormatter.format(primaVacacionalAnual)}</span>` : ''}
-                        <hr><hr>
-                        <span><strong>Total Bruto Estimado:</strong></span> <span>${currencyFormatter.format(catorcenaAltaBruta)}</span>
-                        <span>ISR Estimado (${isrPorcentaje}%):</span> <span class="text-red-600">-${currencyFormatter.format(isrCatorcenaAlta)}</span>
-                        <span>Deducción IMSS:</span> <span class="text-red-600">-${currencyFormatter.format(imssEstimado)}</span>
-                        <span>ASPEN Adicional:</span> <span class="text-red-600">-${currencyFormatter.format(aspenAdicional)}</span>
-                        <span>Ajuste ASPA:</span> <span class="text-red-600">-${currencyFormatter.format(ajusteAspa)}</span>
-                        <span>Otras Deducciones:</span> <span class="text-red-600">-${currencyFormatter.format(otrasDeducciones)}</span>
-                        <hr><hr>
-                        <span><strong>Neto a Recibir Estimado:</strong></span> <span class="net-pay">${currencyFormatter.format(catorcenaAltaNeta)}</span>
-                    </div>
-                </div>
-
-                <div class="result-section bg-gray-50 border border-gray-200 p-6 rounded-lg mb-6">
-                    <h3 class="text-xl font-bold text-gray-700 mb-4">Estimación Catorcena Base ("Baja")</h3>
-                     <div class="result-grid">
-                        ${percepcionesFijasBajaHTML}
-                        <hr><hr>
-                        <span><strong>Total Bruto Estimado:</strong></span> <span>${currencyFormatter.format(catorcenaBajaBruta)}</span>
-                        <span>ISR Estimado (${isrPorcentaje}%):</span> <span class="text-red-600">-${currencyFormatter.format(isrCatorcenaBaja)}</span>
-                        <span>Deducción IMSS:</span> <span class="text-red-600">-${currencyFormatter.format(imssEstimado)}</span>
-                        <span>ASPEN Adicional:</span> <span class="text-red-600">-${currencyFormatter.format(aspenAdicional)}</span>
-                        <span>Ajuste ASPA:</span> <span class="text-red-600">-${currencyFormatter.format(ajusteAspa)}</span>
-                         <span>Otras Deducciones:</span> <span class="text-red-600">-${currencyFormatter.format(otrasDeducciones)}</span>
-                        <hr><hr>
-                        <span><strong>Neto a Recibir Estimado:</strong></span> <strong class="net-pay">${currencyFormatter.format(catorcenaBajaNeta)}</strong>
-                    </div>
-                </div>
-                
-                 <div class="info-section bg-teal-50 border-l-4 border-teal-500 p-4 rounded-r-lg">
-                    <h3 class="text-lg font-bold text-teal-800">Aportaciones (Informativo Mensual)</h3>
-                    <div class="result-grid mt-2">
-                        <span>Fondo de Ahorro (FCAA):</span> <span>${currencyFormatter.format(fcaaMensual)}</span>
-                        <span>Cláusula Sindical:</span> <span>${currencyFormatter.format(clausulaSindicalMensual)}</span>
-                    </div>
-                </div>
-                
-                 <div class="info-section bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mt-6">
-                    <h3 class="text-lg font-bold text-yellow-800">Prestaciones Anuales (Informativo)</h3>
-                    <div class="result-grid mt-2">
-                        <span>Aguinaldo (20 días Estimado):</span> <span>${currencyFormatter.format(aguinaldoAnual)}</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        function resetForm() {
-            document.getElementById('salaryForm').reset();
-            document.getElementById('results').innerHTML = '';
-        }
     </script>
 
 </body>
+
 </html>
